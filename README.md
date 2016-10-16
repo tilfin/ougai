@@ -1,6 +1,8 @@
 Ougai
 =====
 
+[![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
+
 A JSON logger is compatible with [bunyan](https://github.com/trentm/node-bunyan) for Node.js
 
 ## Installation
@@ -25,7 +27,7 @@ $ gem install ougai
 
 ## Usage
 
-Ougai::Logger is sub-class of original Logger in Ruby.
+**Ougai::Logger** is sub-class of original [Logger](https://docs.ruby-lang.org/ja/latest/class/Logger.html) in Ruby.
 
 ```ruby
 require 'rubygems'

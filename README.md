@@ -46,6 +46,20 @@ logger.info('Information!')
 {"name":"main","hostname":"mint","pid":14607,"level":30,"time":"2016-10-16T22:26:48.835+09:00","v":0,"msg":"Information!"}
 ```
 
+### log with an exception
+
+```ruby
+begin
+  raise StandardError, 'some error'
+rescue => ex
+  logger.error(ex)
+end
+```
+
+```json
+{"name":"main","hostname":"mint","pid":4422,"level":50,"time":"2016-10-22T13:05:02.989+09:00","v":0,"msg":"some error","err":{"name":"StandardError","message":"some error","stack":"main.rb:24:in `<main>'"}}
+```
+
 ### log with a message and custom data
 
 ```ruby

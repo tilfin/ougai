@@ -2,6 +2,7 @@ Ougai
 =====
 
 [![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
+[![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
 
 A JSON logger is compatible with [bunyan](https://github.com/trentm/node-bunyan) for Node.js
 
@@ -36,7 +37,7 @@ require 'ougai'
 logger = Ougai::Logger.new(STDOUT)
 ```
 
-### log only message
+### log only a message
 
 ```ruby
 logger.info('Information!')
@@ -46,7 +47,7 @@ logger.info('Information!')
 {"name":"main","hostname":"mint","pid":14607,"level":30,"time":"2016-10-16T22:26:48.835+09:00","v":0,"msg":"Information!"}
 ```
 
-### log with an exception
+### log only an exception
 
 ```ruby
 begin

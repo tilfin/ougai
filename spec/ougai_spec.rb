@@ -54,6 +54,19 @@ describe Ougai do
         end
       end
 
+      context 'with exception' do
+        it 'outputs valid' do
+          begin
+            raise StandardError, 'errmsg'
+          rescue => ex
+            logger.send(method, ex)
+          end
+
+          expect(item).to be_log_message('errmsg', log_level)
+          expect(item).to include_error('errmsg')
+        end
+      end
+
       context 'with message and data' do
         it 'outputs valid' do
           logger.send(method, log_msg, data_id: 99, action: 'insert')

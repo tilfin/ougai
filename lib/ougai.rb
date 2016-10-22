@@ -47,8 +47,8 @@ module Ougai
     def to_item(msg, ex, data)
       item = {}
       if ex.nil? && msg.is_a?(Exception)
-        item[:msg] = ex.to_s
-        item[:err] = serialize_ex(ex)
+        item[:msg] = msg.to_s
+        item[:err] = serialize_ex(msg)
       elsif ex
         item[:msg] = msg
         if ex.is_a?(Hash)

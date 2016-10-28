@@ -19,23 +19,23 @@ module Ougai
       @formatter = create_formatter
     end
 
-    def debug(message, ex = nil, data = {})
+    def debug(message, ex = nil, data = nil)
       super(to_item(message, ex, data))
     end
 
-    def info(message, ex = nil, data = {})
+    def info(message, ex = nil, data = nil)
       super(to_item(message, ex, data))
     end
 
-    def warn(message, ex = nil, data = {})
+    def warn(message, ex = nil, data = nil)
       super(to_item(message, ex, data))
     end
 
-    def error(message, ex = nil, data = {})
+    def error(message, ex = nil, data = nil)
       super(to_item(message, ex, data))
     end
 
-    def fatal(message, ex = nil, data = {})
+    def fatal(message, ex = nil, data = nil)
       super(to_item(message, ex, data))
     end
 
@@ -58,23 +58,34 @@ module Ougai
 
     def to_item(msg, ex, data)
       item = {}
-      if ex.nil? && msg.is_a?(Exception)
-        item[:msg] = msg.to_s
-        item[@ex_key] = serialize_ex(msg)
-      elsif ex
-        item[:msg] = msg
-        if ex.is_a?(Hash)
-          item.merge!(ex)
-        elsif ex.is_a?(Exception)
-          item[@ex_key] = serialize_ex(ex)
-          item.merge!(data)
+      if ex.nil?       # 1 arg
+        if msg.is_a?(Exception)
+          item[:msg] = msg.to_s
+          item[@ex_key] = serialize_ex(msg)
+        elsif msg.is_a?(Hash)
+          item[:msg] = @default_message unless msg.key?(:msg)
+          item.merge!(msg)
+        else
+          item[:msg] = msg.to_s
         end
-      elsif msg.is_a?(Hash)
-        item[:msg] = @default_message unless msg.key?(:msg)
-        item.merge!(msg)
-      else
-        item[:msg] = msg
-        item.merge!(data)
+      elsif data.nil?  # 2 args
+        if ex.is_a?(Exception)
+          item[:msg] = msg.to_s
+          item[@ex_key] = serialize_ex(ex)
+        elsif ex.is_a?(Hash)
+          item.merge!(ex)
+          if msg.is_a?(Exception)
+            item[@ex_key] = serialize_ex(msg)
+          else
+            item[:msg] = msg.to_s
+          end
+        end
+      elsif msg        # 3 args
+        item[@ex_key] = serialize_ex(ex) if ex.is_a?(Exception)
+        item.merge!(data) if data.is_a?(Hash)
+        item[:msg] = msg.to_s
+      else             # No args
+        item[:msg] = @default_message
       end
       item
     end

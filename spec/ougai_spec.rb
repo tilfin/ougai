@@ -67,6 +67,22 @@ describe Ougai do
         end
       end
 
+      context 'with data that contains msg' do
+        it 'outputs valid' do
+          logger.send(method, { msg: log_msg, data_id: 108, action: 'dump' })
+          expect(item).to be_log_message(log_msg, log_level)
+          expect(item).to include_data(data_id: 108, action: 'dump')
+        end
+      end
+
+      context 'with data that does not contain msg' do
+        it 'outputs valid' do
+          logger.send(method, { data_id: 109, action: 'dump' })
+          expect(item).to be_log_message('No message', log_level)
+          expect(item).to include_data(data_id: 109, action: 'dump')
+        end
+      end
+
       context 'with message and data' do
         it 'outputs valid' do
           logger.send(method, log_msg, data_id: 99, action: 'insert')

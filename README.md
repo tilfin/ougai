@@ -47,6 +47,33 @@ logger.info('Information!')
 {"name":"main","hostname":"mint","pid":14607,"level":30,"time":"2016-10-16T22:26:48.835+09:00","v":0,"msg":"Information!"}
 ```
 
+### log only a data
+
+```ruby
+logger.info({
+  msg: 'Request', method: 'GET', path: '/login',
+  format: 'html', controller: 'LoginController',
+  action: 'new', status: 200
+})
+logger.debug(user: { name: 'Taro', age: 19 })
+```
+
+```json
+{"name":"main","hostname":"mint","pid":9044,"level":30,"time":"2016-10-28T17:58:53.668+09:00","v":0,"msg":"Request","method":"GET","path":"/login","format":"html","controller":"LoginController","action":"new","status":200}
+{"name":"main","hostname":"mint","pid":9044,"level":20,"time":"2016-10-28T17:58:53.668+09:00","v":0,"msg":"No message","user":{"name":"Taro","age":19}}
+```
+
+If a data does not contain `msg` field, msg is set `default_message` attribute value of a Logger. its default is 'No message'.
+
+```ruby
+logger.default_message = 'User dump'
+logger.debug(user: { name: 'Taro', age: 19 })
+```
+
+```json
+{"name":"main","hostname":"mint","pid":9303,"level":20,"time":"2016-10-28T18:03:50.118+09:00","v":0,"msg":"User dump","user":{"name":"Taro","age":19}}
+```
+
 ### log only an exception
 
 ```ruby

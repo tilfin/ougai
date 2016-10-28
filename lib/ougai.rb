@@ -6,8 +6,12 @@ require 'json'
 
 module Ougai
   class Logger < Logger
+    attr_accessor :default_message
+
     def initialize(*args)
       super(*args)
+      @default_message = 'No message'
+
       run_filename = File.basename($0, ".rb")
       hostname = Socket.gethostname
       @formatter = proc do |severity, time, progname, data|
@@ -57,6 +61,9 @@ module Ougai
           item[:err] = serialize_ex(ex)
           item.merge!(data)
         end
+      elsif msg.is_a?(Hash)
+        item[:msg] = @default_message unless msg.key?(:msg)
+        item.merge!(msg)
       else
         item[:msg] = msg
         item.merge!(data)

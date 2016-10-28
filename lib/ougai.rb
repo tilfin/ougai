@@ -62,10 +62,8 @@ module Ougai
           item.merge!(data)
         end
       elsif msg.is_a?(Hash)
-        h = msg.dup
-        item[:msg] = h[:msg] || @default_message
-        h.delete(:msg)
-        item.merge!(h)
+        item[:msg] = @default_message unless msg.key?(:msg)
+        item.merge!(msg)
       else
         item[:msg] = msg
         item.merge!(data)

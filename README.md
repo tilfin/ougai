@@ -114,6 +114,20 @@ end
 {"name":"main","hostname":"mint","pid":14607,"level":60,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Unexpected!","err":{"name":"StandardError","message":"fatal error","stack":"main.rb:12:in `<main>'"}}
 ```
 
+### log with an exception and custom data
+
+```ruby
+begin
+  raise StandardError, 'some error'
+rescue => ex
+  logger.error(ex, error_id: 999)
+end
+```
+
+```json
+{"name":"main","hostname":"mint","pid":13962,"level":50,"time":"2016-10-28T23:44:52.144+09:00","v":0,"error_id":999,"err":{"name":"StandardError","message":"some error","stack":"main.rb:40:in `<main>'"}}
+```
+
 ### log with a message, an exception and custom data
 
 ```ruby

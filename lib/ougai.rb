@@ -6,24 +6,14 @@ require 'json'
 
 module Ougai
   class Logger < Logger
-    attr_accessor :default_message
+    attr_accessor :default_message, :app_name
 
     def initialize(*args)
       super(*args)
       @default_message = 'No message'
-
-      run_filename = File.basename($0, ".rb")
-      hostname = Socket.gethostname
-      @formatter = proc do |severity, time, progname, data|
-        JSON.generate({
-          name: progname || run_filename,
-          hostname: hostname,
-          pid: $$,
-          level: to_level(severity),
-          time: time.iso8601(3),
-          v: 0
-        }.merge(data)) + "\n"
-      end
+      @app_name = File.basename($0, ".rb")
+      @hostname = Socket.gethostname
+      @formatter = create_formatter
     end
 
     def debug(message, ex = nil, data = {})
@@ -44,6 +34,21 @@ module Ougai
 
     def fatal(message, ex = nil, data = {})
       super(to_item(message, ex, data))
+    end
+
+    protected
+
+    def create_formatter
+      proc do |severity, time, progname, data|
+        JSON.generate({
+          name: progname || @app_name,
+          hostname: @hostname,
+          pid: $$,
+          level: to_level(severity),
+          time: time.iso8601(3),
+          v: 0
+        }.merge(data)) + "\n"
+      end
     end
 
     private

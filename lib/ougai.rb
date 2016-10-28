@@ -7,12 +7,15 @@ require 'json'
 module Ougai
   class Logger < Logger
     attr_accessor :default_message, :app_name
+    attr_accessor :ex_key, :ex_trace_indent
 
     def initialize(*args)
       super(*args)
       @default_message = 'No message'
       @app_name = File.basename($0, ".rb")
       @hostname = Socket.gethostname
+      @ex_key = :err
+      @ex_trace_indent = 2
       @formatter = create_formatter
     end
 
@@ -57,13 +60,13 @@ module Ougai
       item = {}
       if ex.nil? && msg.is_a?(Exception)
         item[:msg] = msg.to_s
-        item[:err] = serialize_ex(msg)
+        item[@ex_key] = serialize_ex(msg)
       elsif ex
         item[:msg] = msg
         if ex.is_a?(Hash)
           item.merge!(ex)
         elsif ex.is_a?(Exception)
-          item[:err] = serialize_ex(ex)
+          item[@ex_key] = serialize_ex(ex)
           item.merge!(data)
         end
       elsif msg.is_a?(Hash)
@@ -82,7 +85,8 @@ module Ougai
         message: ex.to_s
       }
       if ex.backtrace
-        err[:stack] = ex.backtrace.join("\n  ")
+        sp = "\n" + ' ' * @ex_trace_indent
+        err[:stack] = ex.backtrace.join(sp)
       end
       err
     end

@@ -1,10 +1,12 @@
 Ougai
 =====
 
-[![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
 [![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
+[![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
 
-A JSON logger is compatible with [bunyan](https://github.com/trentm/node-bunyan) for Node.js
+A JSON logger is capable of handling a message, data or an exception easily.
+It is compatible with [bunyan](https://github.com/trentm/node-bunyan) for Node.js.
+It can also output human readable format for the console.
 
 ## Installation
 

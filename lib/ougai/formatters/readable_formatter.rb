@@ -1,10 +1,11 @@
-require 'logger'
-require 'time'
+require 'ougai/formatters/base'
 
 module Ougai
   module Formatters
-    class ReadableFormatter < Logger::Formatter
-      def initialize
+    class ReadableFormatter < Base
+      def initialize(app_name = nil, hostname = nil)
+        super(app_name, hostname)
+        @trace_indent = 4
         load_dependency
       end
 

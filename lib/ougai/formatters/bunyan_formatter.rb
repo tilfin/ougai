@@ -1,16 +1,9 @@
-require 'logger'
+require 'ougai/formatters/base'
 require 'json'
-require 'time'
-require 'socket'
 
 module Ougai
   module Formatters
-    class BunyanFormatter < Logger::Formatter
-      def initialize(app_name = nil, hostname = nil)
-        @app_name = app_name || File.basename($0, ".rb")
-        @hostname = hostname || Socket.gethostname
-      end
-
+    class BunyanFormatter < Base
       def call(severity, time, progname, data)
         JSON.generate({
           name: progname || @app_name,

@@ -1,4 +1,5 @@
 require 'ougai/version'
+require 'ougai/formatters/base'
 require 'ougai/formatters/bunyan_formatter'
 require 'ougai/formatters/readable_formatter'
 require 'logger'
@@ -7,13 +8,12 @@ require 'time'
 module Ougai
   class Logger < ::Logger
     attr_accessor :default_message, :app_name
-    attr_accessor :ex_key, :ex_trace_indent
+    attr_accessor :exc_key
 
     def initialize(*args)
       super(*args)
       @default_message = 'No message'
-      @ex_key = :err
-      @ex_trace_indent = 2
+      @exc_key = :err
       @formatter = create_formatter
     end
 
@@ -60,17 +60,17 @@ module Ougai
       elsif data.nil?  # 2 args
         if ex.is_a?(Exception)
           item[:msg] = msg.to_s
-          item[@ex_key] = serialize_ex(ex)
+          item[@ex_key] = serialize_exc(ex)
         elsif ex.is_a?(Hash)
           item.merge!(ex)
           if msg.is_a?(Exception)
-            item[@ex_key] = serialize_ex(msg)
+            item[@ex_key] = serialize_exc(msg)
           else
             item[:msg] = msg.to_s
           end
         end
       elsif msg        # 3 args
-        item[@ex_key] = serialize_ex(ex) if ex.is_a?(Exception)
+        item[@ex_key] = serialize_exc(ex) if ex.is_a?(Exception)
         item.merge!(data) if data.is_a?(Hash)
         item[:msg] = msg.to_s
       else             # No args
@@ -80,15 +80,7 @@ module Ougai
     end
 
     def serialize_ex(ex)
-      err = {
-        name: ex.class.name,
-        message: ex.to_s
-      }
-      if ex.backtrace
-        sp = "\n" + ' ' * @ex_trace_indent
-        err[:stack] = ex.backtrace.join(sp)
-      end
-      err
+      @formatter.serialize_exc(ex)
     end
   end
 end

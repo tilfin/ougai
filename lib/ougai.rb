@@ -1,14 +1,12 @@
 require 'ougai/version'
 require 'ougai/formatters/base'
-require 'ougai/formatters/bunyan_formatter'
-require 'ougai/formatters/readable_formatter'
+require 'ougai/formatters/bunyan'
+require 'ougai/formatters/readable'
 require 'logger'
-require 'time'
 
 module Ougai
   class Logger < ::Logger
-    attr_accessor :default_message, :app_name
-    attr_accessor :exc_key
+    attr_accessor :default_message, :exc_key
 
     def initialize(*args)
       super(*args)
@@ -40,7 +38,7 @@ module Ougai
     protected
 
     def create_formatter
-      Formatters::BunyanFormatter.new
+      Formatters::Bunyan.new
     end
 
     private
@@ -50,7 +48,7 @@ module Ougai
       if ex.nil?       # 1 arg
         if msg.is_a?(Exception)
           item[:msg] = msg.to_s
-          item[@ex_key] = serialize_ex(msg)
+          set_exc(item, msg)
         elsif msg.is_a?(Hash)
           item[:msg] = @default_message unless msg.key?(:msg)
           item.merge!(msg)
@@ -60,17 +58,17 @@ module Ougai
       elsif data.nil?  # 2 args
         if ex.is_a?(Exception)
           item[:msg] = msg.to_s
-          item[@ex_key] = serialize_exc(ex)
+          set_exc(item, ex)
         elsif ex.is_a?(Hash)
           item.merge!(ex)
           if msg.is_a?(Exception)
-            item[@ex_key] = serialize_exc(msg)
+            set_exc(item, msg)
           else
             item[:msg] = msg.to_s
           end
         end
       elsif msg        # 3 args
-        item[@ex_key] = serialize_exc(ex) if ex.is_a?(Exception)
+        set_exc(item, ex) if ex.is_a?(Exception)
         item.merge!(data) if data.is_a?(Hash)
         item[:msg] = msg.to_s
       else             # No args
@@ -79,8 +77,8 @@ module Ougai
       item
     end
 
-    def serialize_ex(ex)
-      @formatter.serialize_exc(ex)
+    def set_exc(item, exc)
+      item[@exc_key] = @formatter.serialize_exc(exc)
     end
   end
 end

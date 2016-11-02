@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Ougai::Formatters::ReadableFormatter do
+describe Ougai::Formatters::Readable do
   let(:data) do
     {
       msg: 'Log Message!',

@@ -3,7 +3,7 @@ require 'json'
 
 module Ougai
   module Formatters
-    class BunyanFormatter < Base
+    class Bunyan < Base
       def call(severity, time, progname, data)
         JSON.generate({
           name: progname || @app_name,

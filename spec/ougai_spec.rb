@@ -172,27 +172,6 @@ describe Ougai do
       it_behaves_like 'log'
     end
 
-    describe 'extendable' do
-      let(:io) { StringIO.new }
-      let(:sub_logger) do
-        class SubLogger < Ougai::Logger
-          def create_formatter
-            proc do |severity, time, progname, data|
-              "#{severity} #{@app_name} #{data[:msg]}\n"
-            end
-          end
-        end
-
-        SubLogger.new(io)
-      end
-
-      it 'is valid' do
-        sub_logger.app_name = 'ExampleApp'
-        sub_logger.info('Hello!')
-        log_str = io.string.chomp
-        expect(log_str).to eq('INFO ExampleApp Hello!')
-      end
-    end
   end
 
 end

@@ -2,7 +2,7 @@ require 'ougai/formatters/base'
 
 module Ougai
   module Formatters
-    class ReadableFormatter < Base
+    class Readable < Base
       def initialize(app_name = nil, hostname = nil)
         super(app_name, hostname)
         @trace_indent = 4

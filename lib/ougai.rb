@@ -1,5 +1,6 @@
 require 'ougai/version'
-require 'ougai/bunyan_formatter'
+require 'ougai/formatters/bunyan_formatter'
+require 'ougai/formatters/readable_formatter'
 require 'logger'
 require 'time'
 
@@ -39,7 +40,7 @@ module Ougai
     protected
 
     def create_formatter
-      BunyanFormatter.new
+      Formatters::BunyanFormatter.new
     end
 
     private

@@ -1,19 +1,16 @@
-require "ougai/version"
+require 'ougai/version'
+require 'ougai/bunyan_formatter'
 require 'logger'
-require 'socket'
 require 'time'
-require 'json'
 
 module Ougai
-  class Logger < Logger
+  class Logger < ::Logger
     attr_accessor :default_message, :app_name
     attr_accessor :ex_key, :ex_trace_indent
 
     def initialize(*args)
       super(*args)
       @default_message = 'No message'
-      @app_name = File.basename($0, ".rb")
-      @hostname = Socket.gethostname
       @ex_key = :err
       @ex_trace_indent = 2
       @formatter = create_formatter
@@ -42,16 +39,7 @@ module Ougai
     protected
 
     def create_formatter
-      proc do |severity, time, progname, data|
-        JSON.generate({
-          name: progname || @app_name,
-          hostname: @hostname,
-          pid: $$,
-          level: to_level(severity),
-          time: time.iso8601(3),
-          v: 0
-        }.merge(data)) + "\n"
-      end
+      BunyanFormatter.new
     end
 
     private
@@ -100,21 +88,6 @@ module Ougai
         err[:stack] = ex.backtrace.join(sp)
       end
       err
-    end
-
-    def to_level(severity)
-      case severity
-      when 'INFO'
-        30
-      when 'WARN'
-        40
-      when 'ERROR'
-        50
-      when 'FATAL'
-        60
-      else # DEBUG
-        20
-      end
     end
   end
 end

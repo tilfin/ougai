@@ -145,7 +145,7 @@ end
 ```
 
 
-## View log by node-bunyan
+### View log by node-bunyan
 
 Install [bunyan](https://github.com/trentm/node-bunyan) via NPM
 
@@ -171,6 +171,27 @@ $ bunyan output.log
       main.rb:18:in `<main>'
 ```
 
+## Use human Readable formatter for console
+
+Add awesome_print to Gemfile and `bundle`
+
+```ruby
+gem 'awesome_print'
+```
+
+Set *Ougai::Formatters::Readable* instance to `formatter` accessor
+
+```ruby
+require 'rubygems'
+require 'ougai'
+
+logger = Ougai::Logger.new(STDOUT)
+logger.formatter = Ougai::Formatters::Readable.new
+```
+
+### Screen result example
+
+![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true))
 
 ## License
 

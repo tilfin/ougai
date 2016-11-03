@@ -6,7 +6,7 @@ module Ougai
       def initialize(app_name = nil, hostname = nil)
         super(app_name, hostname)
         @trace_indent = 4
-        load_dependency
+        load_awesome_print
       end
 
       def call(severity, time, progname, data)
@@ -42,7 +42,7 @@ module Ougai
 
       private
 
-      def load_dependency
+      def load_awesome_print
         require 'awesome_print'
       rescue LoadError
         puts 'You must install the awesome_print gem to use this output.'

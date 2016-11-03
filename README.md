@@ -145,7 +145,7 @@ end
 ```
 
 
-### View log by node-bunyan
+## View log by node-bunyan
 
 Install [bunyan](https://github.com/trentm/node-bunyan) via NPM
 
@@ -171,6 +171,7 @@ $ bunyan output.log
       main.rb:18:in `<main>'
 ```
 
+
 ## Use human Readable formatter for console
 
 Add awesome_print to Gemfile and `bundle`
@@ -191,7 +192,94 @@ logger.formatter = Ougai::Formatters::Readable.new
 
 ### Screen result example
 
-![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true))
+![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true)
+
+
+## Use on Rails
+
+### for Development
+
+Add following code to `config/environments/development.rb`
+
+```ruby
+Rails.application.configure do
+  ...
+
+  logger = Ougai::Logger.new(STDOUT)
+  logger.formatter = Ougai::Formatters::Readable.new
+  config.logger = logger
+end
+```
+
+### for Production
+
+Add following code to the end block of `config/environments/production.rb`
+
+```ruby
+Rails.application.configure do
+  ...
+
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    config.logger = Ougai::Logger.new(STDOUT)
+  else
+    config.logger = Ougai::Logger.new(config.paths['log'].first)
+  end
+end
+```
+
+### With Lograge
+
+You must modify [lograge](https://github.com/roidrage/lograge) formatter like *Raw*.
+The following code set request data to `request` field of JSON.
+
+```ruby
+Rails.application.configure do
+  config.lograge.enabled = true
+  config.lograge.formatter = Class.new do |fmt|
+    def fmt.call(data)
+      { msg: 'Request', request: data }
+    end
+  end
+end
+```
+
+### Output example on development
+
+If you modify `application_controller.rb` as
+
+```ruby
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+
+  def hello
+    logger.debug 'Call action', somefield: 'somevalue'
+    render plain: 'Hello!'
+  end
+end
+```
+
+logger outputs
+
+```
+[2016-11-03T15:11:24.847+09:00] DEBUG: Call action
+{
+    :somefield => "somevalue"
+}
+[2016-11-03T15:11:24.872+09:00] INFO: Request
+{
+    :request => {
+            :method => "GET",
+              :path => "/",
+            :format => :html,
+        :controller => "ApplicationController",
+            :action => "hello",
+            :status => 200,
+          :duration => 30.14,
+              :view => 3.35,
+                :db => 0.0
+    }
+}
+```
 
 ## License
 

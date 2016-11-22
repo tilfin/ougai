@@ -32,6 +32,19 @@ module Ougai
       super(to_item(message, ex, data))
     end
 
+    def self.broadcast(logger)
+      Module.new do |mdl|
+        ::Logger::Severity.constants.each do |severity|
+          method_name = severity.downcase.to_sym
+
+          mdl.send(:define_method, method_name) do |*args|
+            logger.send(method_name, *args)
+            super(*args)
+          end
+        end
+      end
+    end
+
     protected
 
     def create_formatter

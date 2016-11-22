@@ -3,15 +3,19 @@ require 'ougai/formatters/base'
 module Ougai
   module Formatters
     class Readable < Base
-      def initialize(app_name = nil, hostname = nil)
-        super(app_name, hostname)
-        @trace_indent = 4
+      attr_accessor :plain, :trace_indent
+
+      def initialize(opts = {})
+        super(opts[:app_name], opts[:hostname])
+        @trace_indent = opts[:trace_indent] || 4
+        @plain = opts[:plain] || false
         load_awesome_print
       end
 
       def call(severity, time, progname, data)
         msg = data.delete(:msg)
-        strs = ["[#{time.iso8601(3)}] #{colored_level(severity)}: #{msg}"]
+        level = @plain ? severity : colored_level(severity)
+        strs = ["[#{time.iso8601(3)}] #{level}: #{msg}"]
         if data.key?(:err)
           err = data.delete(:err)
           err_str = "  #{err[:name]} (#{err[:message]}):"
@@ -19,7 +23,7 @@ module Ougai
           strs.push(err_str)
         end
         unless data.empty?
-          strs.push(data.ai)
+          strs.push(data.ai({ plain: @plain }))
         end
         strs.join("\n") + "\n"
       end

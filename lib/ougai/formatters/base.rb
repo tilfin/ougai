@@ -6,10 +6,11 @@ module Ougai
   module Formatters
     class Base < Logger::Formatter
       attr_accessor :trace_indent, :trace_max_lines
+      attr_reader :app_name, :hostname
 
       def initialize(app_name = nil, hostname = nil)
         @app_name = app_name || File.basename($0, ".rb")
-        @hostname = hostname || Socket.gethostname
+        @hostname = hostname || Socket.gethostname.force_encoding('UTF-8')
         @trace_indent = 2
         @trace_max_lines = 100
       end

@@ -125,6 +125,15 @@ describe Ougai::Logger do
         expect(item).to include_data(something: { name: 'foo' })
       end
     end
+
+    context 'blocks' do
+      it 'outputs valid' do
+        block = Proc.new { "#{log_msg}" }
+        logger.send(method, &block)
+
+        expect(item).to be_log_message(log_msg, log_level)
+      end
+    end
   end
 
   describe '#debug' do

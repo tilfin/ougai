@@ -12,24 +12,24 @@ module Ougai
       @formatter = create_formatter
     end
 
-    def debug(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def debug(message = nil, ex = nil, data = nil, &block)
+      super(to_item(message, ex, data, &block), &nil)
     end
 
-    def info(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def info(message = nil, ex = nil, data = nil, &block)
+      super(to_item(message, ex, data, &block), &nil)
     end
 
-    def warn(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def warn(message = nil, ex = nil, data = nil, &block)
+      super(to_item(message, ex, data, &block), &nil)
     end
 
-    def error(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def error(message = nil, ex = nil, data = nil, &block)
+      super(to_item(message, ex, data, &block), &nil)
     end
 
-    def fatal(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def fatal(message = nil, ex = nil, data = nil, &block)
+      super(to_item(message, ex, data, &block), &nil)
     end
 
     def self.broadcast(logger)
@@ -53,7 +53,7 @@ module Ougai
 
     private
 
-    def to_item(msg, ex, data)
+    def to_item(msg, ex, data, &block)
       item = {}
       if ex.nil?       # 1 arg
         if msg.is_a?(Exception)
@@ -84,6 +84,11 @@ module Ougai
       else             # No args
         item[:msg] = @default_message
       end
+
+      if block_given?
+        item[:msg] = yield
+      end
+
       item
     end
 

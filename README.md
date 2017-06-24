@@ -144,6 +144,28 @@ end
 {"name":"main","hostname":"mint","pid":14607,"level":50,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Caught error","err":{"name":"ZeroDivisionError","message":"divided by 0","stack":"main.rb:18:in `/'\n ...'"},"reason":"zero spec"}
 ```
 
+### logs with blocks
+
+```ruby
+logger.info { 'Hello!' }
+
+logger.debug do
+  ['User dump', { name: 'Taro', age: 15 }]
+end
+
+logger.error do
+  ['Failed to fetch info', ex, { id: 10 }]
+end
+
+loggger.fatal { ex }
+
+loggger.fatal do
+  ['Unexpected', ex]
+end
+```
+
+To specify more than one of a message, an exception and custom data, the block returns them as an array.
+
 
 ## View log by node-bunyan
 
@@ -205,7 +227,7 @@ A custom logger includes LoggerSilence because Rails logger must support `silenc
 ```ruby
 module YourApp
   class Logger < Ougai::Logger
-  	include ActiveSupport::LoggerThreadSafeLevel
+    include ActiveSupport::LoggerThreadSafeLevel
     include LoggerSilence
 
     def initialize(*args)

@@ -197,6 +197,33 @@ logger.formatter = Ougai::Formatters::Readable.new
 
 ## Use on Rails
 
+### Define a custom logger
+
+Add following code to `lib/your_app/logger.rb`
+A custom logger includes LoggerSilence because Rails logger must support `silence` feature.
+
+```ruby
+module YourApp
+  class Logger < Ougai::Logger
+  	include ActiveSupport::LoggerThreadSafeLevel
+    include LoggerSilence
+
+    def initialize(*args)
+      super
+      after_initialize if respond_to? :after_initialize
+    end
+
+    def create_formatter
+      if Rails.env.development? || Rails.env.test?
+        Ougai::Formatters::Readable.new
+      else
+        Ougai::Formatters::Bunyan.new
+      end
+    end
+  end
+end
+```
+
 ### for Development
 
 Add following code to `config/environments/development.rb`
@@ -205,9 +232,7 @@ Add following code to `config/environments/development.rb`
 Rails.application.configure do
   ...
 
-  logger = Ougai::Logger.new(STDOUT)
-  logger.formatter = Ougai::Formatters::Readable.new
-  config.logger = logger
+  config.logger = YourApp::Logger.new(STDOUT)
 end
 ```
 
@@ -220,9 +245,9 @@ Rails.application.configure do
   ...
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
-    config.logger = Ougai::Logger.new(STDOUT)
+    config.logger = YourApp::Logger.new(STDOUT)
   else
-    config.logger = Ougai::Logger.new(config.paths['log'].first)
+    config.logger = YourApp::Logger.new(config.paths['log'].first)
   end
 end
 ```

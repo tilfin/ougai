@@ -12,24 +12,53 @@ module Ougai
       @formatter = create_formatter
     end
 
-    def debug(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def debug(message = nil, ex = nil, data = nil, &block)
+      return true if level > DEBUG
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
     end
 
-    def info(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def info(message = nil, ex = nil, data = nil)
+      return true if level > INFO
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
     end
 
-    def warn(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def warn(message = nil, ex = nil, data = nil)
+      return true if level > WARN
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
     end
 
-    def error(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def error(message = nil, ex = nil, data = nil)
+      return true if level > ERROR
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
     end
 
-    def fatal(message, ex = nil, data = nil)
-      super(to_item(message, ex, data))
+    def fatal(message = nil, ex = nil, data = nil)
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
     end
 
     def self.broadcast(logger)
@@ -53,7 +82,9 @@ module Ougai
 
     private
 
-    def to_item(msg, ex, data)
+    def to_item(args)
+      msg, ex, data = args
+
       item = {}
       if ex.nil?       # 1 arg
         if msg.is_a?(Exception)

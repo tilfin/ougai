@@ -144,6 +144,28 @@ end
 {"name":"main","hostname":"mint","pid":14607,"level":50,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Caught error","err":{"name":"ZeroDivisionError","message":"divided by 0","stack":"main.rb:18:in `/'\n ...'"},"reason":"zero spec"}
 ```
 
+### logs with blocks
+
+```ruby
+logger.info { 'Hello!' }
+
+logger.debug do
+  ['User dump', { name: 'Taro', age: 15 }]
+end
+
+logger.error do
+  ['Failed to fetch info', ex, { id: 10 }]
+end
+
+loggger.fatal { ex }
+
+loggger.fatal do
+  ['Unexpected', ex]
+end
+```
+
+To specify more than one of a message, an exception and custom data, the block returns them as an array.
+
 
 ## View log by node-bunyan
 
@@ -197,6 +219,33 @@ logger.formatter = Ougai::Formatters::Readable.new
 
 ## Use on Rails
 
+### Define a custom logger
+
+Add following code to `lib/your_app/logger.rb`
+A custom logger includes LoggerSilence because Rails logger must support `silence` feature.
+
+```ruby
+module YourApp
+  class Logger < Ougai::Logger
+    include ActiveSupport::LoggerThreadSafeLevel
+    include LoggerSilence
+
+    def initialize(*args)
+      super
+      after_initialize if respond_to? :after_initialize
+    end
+
+    def create_formatter
+      if Rails.env.development? || Rails.env.test?
+        Ougai::Formatters::Readable.new
+      else
+        Ougai::Formatters::Bunyan.new
+      end
+    end
+  end
+end
+```
+
 ### for Development
 
 Add following code to `config/environments/development.rb`
@@ -205,9 +254,7 @@ Add following code to `config/environments/development.rb`
 Rails.application.configure do
   ...
 
-  logger = Ougai::Logger.new(STDOUT)
-  logger.formatter = Ougai::Formatters::Readable.new
-  config.logger = logger
+  config.logger = YourApp::Logger.new(STDOUT)
 end
 ```
 
@@ -220,9 +267,9 @@ Rails.application.configure do
   ...
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
-    config.logger = Ougai::Logger.new(STDOUT)
+    config.logger = YourApp::Logger.new(STDOUT)
   else
-    config.logger = Ougai::Logger.new(config.paths['log'].first)
+    config.logger = YourApp::Logger.new(config.paths['log'].first)
   end
 end
 ```

@@ -38,13 +38,22 @@ describe Ougai::Logger do
 
   let(:item) do
     log_str = io.string
-    item = JSON.parse(log_str, symbolize_names: true)
+    begin
+      JSON.parse(log_str, symbolize_names: true)
+    rescue Exception => e
+      nil
+    end 
   end
 
   shared_examples 'log' do
     context 'with message' do
       it 'outputs valid' do
         logger.send(method, log_msg)
+        expect(item).to be_log_message(log_msg, log_level)
+      end
+
+      it 'outputs valid by block' do
+        logger.send(method) { log_msg }
         expect(item).to be_log_message(log_msg, log_level)
       end
     end
@@ -60,11 +69,30 @@ describe Ougai::Logger do
         expect(item).to be_log_message('errmsg', log_level)
         expect(item).to include_error('errmsg')
       end
+
+      it 'outputs valid by block' do
+        begin
+          raise StandardError, 'errmsg'
+        rescue => ex
+          logger.send(method) { ex }
+        end
+
+        expect(item).to be_log_message('errmsg', log_level)
+        expect(item).to include_error('errmsg')
+      end
     end
 
     context 'with data that contains msg' do
       it 'outputs valid' do
         logger.send(method, { msg: log_msg, data_id: 108, action: 'dump' })
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(data_id: 108, action: 'dump')
+      end
+
+      it 'outputs valid by block' do
+        logger.send(method) do
+          { msg: log_msg, data_id: 108, action: 'dump' }
+        end
         expect(item).to be_log_message(log_msg, log_level)
         expect(item).to include_data(data_id: 108, action: 'dump')
       end
@@ -76,11 +104,25 @@ describe Ougai::Logger do
         expect(item).to be_log_message('No message', log_level)
         expect(item).to include_data(data_id: 109, action: 'dump')
       end
+
+      it 'outputs valid by block' do
+        logger.send(method) do
+          { data_id: 109, action: 'dump' }
+        end
+        expect(item).to be_log_message('No message', log_level)
+        expect(item).to include_data(data_id: 109, action: 'dump')
+      end
     end
 
     context 'with message and data' do
       it 'outputs valid' do
         logger.send(method, log_msg, data_id: 99, action: 'insert')
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(data_id: 99, action: 'insert')
+      end
+
+      it 'outputs valid by block' do
+        logger.send(method) { [log_msg, data_id: 99, action: 'insert'] }
         expect(item).to be_log_message(log_msg, log_level)
         expect(item).to include_data(data_id: 99, action: 'insert')
       end
@@ -92,6 +134,17 @@ describe Ougai::Logger do
           raise StandardError, 'errmsg'
         rescue => ex
           logger.send(method, log_msg, ex)
+        end
+
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_error('errmsg')
+      end
+
+      it 'outputs valid by block' do
+        begin
+          raise StandardError, 'errmsg'
+        rescue => ex
+          logger.send(method) { [log_msg, ex] }
         end
 
         expect(item).to be_log_message(log_msg, log_level)
@@ -110,6 +163,19 @@ describe Ougai::Logger do
         expect(item).to include_error('errmsg')
         expect(item).to include_data(something: { name: 'bar' })
       end
+
+      it 'outputs valid by block' do
+        begin
+          raise StandardError, 'errmsg'
+        rescue => ex
+          logger.send(method) do
+            [ex, something: { name: 'bar' }]
+          end
+        end
+
+        expect(item).to include_error('errmsg')
+        expect(item).to include_data(something: { name: 'bar' })
+      end
     end
 
     context 'with message, exception and data' do
@@ -118,6 +184,20 @@ describe Ougai::Logger do
           raise StandardError, 'errmsg'
         rescue => ex
           logger.send(method, log_msg, ex, something: { name: 'foo' })
+        end
+
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_error('errmsg')
+        expect(item).to include_data(something: { name: 'foo' })
+      end
+
+      it 'outputs valid by block' do
+        begin
+          raise StandardError, 'errmsg'
+        rescue => ex
+          logger.send(method) do
+            [log_msg, ex, something: { name: 'foo' }]
+          end
         end
 
         expect(item).to be_log_message(log_msg, log_level)
@@ -165,5 +245,157 @@ describe Ougai::Logger do
     let(:method) { 'fatal' }
 
     it_behaves_like 'log'
+  end
+
+  describe '#level' do
+    context 'DEBUG' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::DEBUG }
+
+      it 'outputs debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_log_message(log_msg, 20)
+      end
+
+      it 'outputs info message' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+      end
+
+      it 'outputs warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_log_message(log_msg, 40)
+      end
+
+      it 'outputs error message' do
+        logger.error(log_msg)
+        expect(item).to be_log_message(log_msg, 50)
+      end
+
+      it 'outputs fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_log_message(log_msg, 60)
+      end
+    end
+
+    context 'INFO' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::INFO }
+
+      it 'does not output debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'outputs info message' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+      end
+
+      it 'outputs warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_log_message(log_msg, 40)
+      end
+
+      it 'outputs error message' do
+        logger.error(log_msg)
+        expect(item).to be_log_message(log_msg, 50)
+      end
+
+      it 'outputs fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_log_message(log_msg, 60)
+      end
+    end
+
+    context 'WARN' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::WARN }
+
+      it 'does not output debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output info message' do
+        logger.info(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'outputs warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_log_message(log_msg, 40)
+      end
+
+      it 'outputs error message' do
+        logger.error(log_msg)
+        expect(item).to be_log_message(log_msg, 50)
+      end
+
+      it 'outputs fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_log_message(log_msg, 60)
+      end
+    end
+
+    context 'ERROR' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::ERROR }
+
+      it 'does not output debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output info message' do
+        logger.info(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'outputs error message' do
+        logger.error(log_msg)
+        expect(item).to be_log_message(log_msg, 50)
+      end
+
+      it 'outputs fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_log_message(log_msg, 60)
+      end
+    end
+
+    context 'FATAL' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::FATAL }
+
+      it 'does not output debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output info message' do
+        logger.info(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output error message' do
+        logger.error(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'outputs fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_log_message(log_msg, 60)
+      end
+    end
   end
 end

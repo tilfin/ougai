@@ -1,3 +1,7 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=f2bcb258be4f9119a498a63a9843140ce2f201437c75e5edbd463a7871cf56d5
+    - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
 language: ruby
 rvm:
   - 2.1.0
@@ -5,3 +9,12 @@ rvm:
   - 2.3.4
   - 2.4.1
 before_install: gem install bundler -v 1.11.2
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+script:
+  - bundle exec rspec
+  - if [ "$TRAVIS_RUBY_VERSION" == "2.4.1" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  # In the case where travis is setup to build PR updates only, 
+  # uncomment the line below
+  # - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

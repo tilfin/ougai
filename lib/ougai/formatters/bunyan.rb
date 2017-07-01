@@ -25,6 +25,8 @@ module Ougai
           50
         when 'FATAL'
           60
+        when 'ANY'
+          70
         else # DEBUG
           20
         end

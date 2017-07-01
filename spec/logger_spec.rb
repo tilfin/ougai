@@ -276,6 +276,11 @@ describe Ougai::Logger do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
       end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
+      end
     end
 
     context 'INFO' do
@@ -305,6 +310,11 @@ describe Ougai::Logger do
       it 'outputs fatal message' do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
+      end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
       end
     end
 
@@ -336,6 +346,11 @@ describe Ougai::Logger do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
       end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
+      end
     end
 
     context 'ERROR' do
@@ -366,6 +381,11 @@ describe Ougai::Logger do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
       end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
+      end
     end
 
     context 'FATAL' do
@@ -395,6 +415,46 @@ describe Ougai::Logger do
       it 'outputs fatal message' do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
+      end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
+      end
+    end
+
+    context 'UNKNOWN' do
+      let(:log_msg) { 'log message' }
+      before { logger.level = Logger::UNKNOWN }
+
+      it 'does not output debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output info message' do
+        logger.info(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output warning message' do
+        logger.warn(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output error message' do
+        logger.error(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'does not output fatal message' do
+        logger.fatal(log_msg)
+        expect(item).to be_nil
+      end
+
+      it 'outputs unknown message' do
+        logger.unknown(log_msg)
+        expect(item).to be_log_message(log_msg, 70)
       end
     end
   end

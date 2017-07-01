@@ -53,6 +53,16 @@ module Ougai
     end
 
     def fatal(message = nil, ex = nil, data = nil)
+      return true if level > UNKNOWN
+      if block_given?
+        args = yield
+      else
+        args = [message, ex, data]
+      end
+      super(to_item(args), &nil)
+    end
+
+    def unknown(message = nil, ex = nil, data = nil)
       if block_given?
         args = yield
       else

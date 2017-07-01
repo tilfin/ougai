@@ -12,63 +12,39 @@ module Ougai
       @formatter = create_formatter
     end
 
-    def debug(message = nil, ex = nil, data = nil)
+    def debug(message = nil, ex = nil, data = nil, &block)
       return true if level > DEBUG
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+      args = block ? yield : [message, ex, data]
+      add(DEBUG, to_item(args))
     end
 
-    def info(message = nil, ex = nil, data = nil)
+    def info(message = nil, ex = nil, data = nil, &block)
       return true if level > INFO
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+      args = block ? yield : [message, ex, data]
+      add(INFO, to_item(args))
     end
 
-    def warn(message = nil, ex = nil, data = nil)
+    def warn(message = nil, ex = nil, data = nil, &block)
       return true if level > WARN
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+      args = block ? yield : [message, ex, data]
+      add(WARN, to_item(args))
     end
 
-    def error(message = nil, ex = nil, data = nil)
+    def error(message = nil, ex = nil, data = nil, &block)
       return true if level > ERROR
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+      args = block ? yield : [message, ex, data]
+      add(ERROR, to_item(args))
     end
 
-    def fatal(message = nil, ex = nil, data = nil)
-      return true if level > UNKNOWN
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+    def fatal(message = nil, ex = nil, data = nil, &block)
+      return true if level > FATAL
+      args = block ? yield : [message, ex, data]
+      add(FATAL, to_item(args))
     end
 
-    def unknown(message = nil, ex = nil, data = nil)
-      if block_given?
-        args = yield
-      else
-        args = [message, ex, data]
-      end
-      super(to_item(args), &nil)
+    def unknown(message = nil, ex = nil, data = nil, &block)
+      args = block ? yield : [message, ex, data]
+      add(UNKNOWN, to_item(args))
     end
 
     def self.broadcast(logger)

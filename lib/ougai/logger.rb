@@ -12,7 +12,7 @@ module Ougai
       @formatter = create_formatter
     end
 
-    def debug(message = nil, ex = nil, data = nil, &block)
+    def debug(message = nil, ex = nil, data = nil)
       return true if level > DEBUG
       if block_given?
         args = yield

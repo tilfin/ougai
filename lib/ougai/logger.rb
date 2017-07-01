@@ -71,36 +71,52 @@ module Ougai
     def to_item(args)
       msg, ex, data = args
 
+      if ex.nil?
+        create_item_with_1arg(msg)
+      elsif data.nil?
+        create_item_with_2args(msg, ex)
+      elsif msg
+        create_item_with_3args(msg, ex, data)
+      else # No args
+        { msg: @default_message }
+      end
+    end
+
+    def create_item_with_1arg(msg)
       item = {}
-      if ex.nil?       # 1 arg
+      if msg.is_a?(Exception)
+        item[:msg] = msg.to_s
+        set_exc(item, msg)
+      elsif msg.is_a?(Hash)
+        item[:msg] = @default_message unless msg.key?(:msg)
+        item.merge!(msg)
+      else
+        item[:msg] = msg.to_s
+      end
+      item
+    end
+
+    def create_item_with_2args(msg, ex)
+      item = {}
+      if ex.is_a?(Exception)
+        item[:msg] = msg.to_s
+        set_exc(item, ex)
+      elsif ex.is_a?(Hash)
+        item.merge!(ex)
         if msg.is_a?(Exception)
-          item[:msg] = msg.to_s
           set_exc(item, msg)
-        elsif msg.is_a?(Hash)
-          item[:msg] = @default_message unless msg.key?(:msg)
-          item.merge!(msg)
         else
           item[:msg] = msg.to_s
         end
-      elsif data.nil?  # 2 args
-        if ex.is_a?(Exception)
-          item[:msg] = msg.to_s
-          set_exc(item, ex)
-        elsif ex.is_a?(Hash)
-          item.merge!(ex)
-          if msg.is_a?(Exception)
-            set_exc(item, msg)
-          else
-            item[:msg] = msg.to_s
-          end
-        end
-      elsif msg        # 3 args
-        set_exc(item, ex) if ex.is_a?(Exception)
-        item.merge!(data) if data.is_a?(Hash)
-        item[:msg] = msg.to_s
-      else             # No args
-        item[:msg] = @default_message
       end
+      item
+    end
+
+    def create_item_with_3args(msg, ex, data)
+      item = {}
+      set_exc(item, ex) if ex.is_a?(Exception)
+      item.merge!(data) if data.is_a?(Hash)
+      item[:msg] = msg.to_s
       item
     end
 

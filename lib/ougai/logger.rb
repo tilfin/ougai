@@ -3,48 +3,49 @@ require 'logger'
 
 module Ougai
   class Logger < ::Logger
-    attr_accessor :default_message, :exc_key
+    attr_accessor :default_message, :exc_key, :with_fields
 
     def initialize(*args)
       super(*args)
       @default_message = 'No message'
       @exc_key = :err
       @formatter = create_formatter
+      @with_fields = {}
     end
 
     def debug(message = nil, ex = nil, data = nil, &block)
       return true if level > DEBUG
       args = block ? yield : [message, ex, data]
-      add(DEBUG, to_item(args))
+      add(DEBUG, build_log(args))
     end
 
     def info(message = nil, ex = nil, data = nil, &block)
       return true if level > INFO
       args = block ? yield : [message, ex, data]
-      add(INFO, to_item(args))
+      add(INFO, build_log(args))
     end
 
     def warn(message = nil, ex = nil, data = nil, &block)
       return true if level > WARN
       args = block ? yield : [message, ex, data]
-      add(WARN, to_item(args))
+      add(WARN, build_log(args))
     end
 
     def error(message = nil, ex = nil, data = nil, &block)
       return true if level > ERROR
       args = block ? yield : [message, ex, data]
-      add(ERROR, to_item(args))
+      add(ERROR, build_log(args))
     end
 
     def fatal(message = nil, ex = nil, data = nil, &block)
       return true if level > FATAL
       args = block ? yield : [message, ex, data]
-      add(FATAL, to_item(args))
+      add(FATAL, build_log(args))
     end
 
     def unknown(message = nil, ex = nil, data = nil, &block)
       args = block ? yield : [message, ex, data]
-      add(UNKNOWN, to_item(args))
+      add(UNKNOWN, build_log(args))
     end
 
     def self.broadcast(logger)
@@ -67,6 +68,10 @@ module Ougai
     end
 
     private
+
+    def build_log(args)
+      @with_fields.merge(to_item(args))
+    end
 
     def to_item(args)
       msg, ex, data = args

@@ -96,6 +96,20 @@ describe Ougai::Logger do
         expect(item).to be_log_message(log_msg, log_level)
         expect(item).to include_data(data_id: 108, action: 'dump')
       end
+
+      it 'outputs valid with fields' do
+        logger.with_fields = { coreField1: 123, core_field2: 'core', 'core_field3' => 456  }
+        logger.send(method, { msg: log_msg, data_id: 109, action: 'do' })
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(data_id: 109, action: 'do', coreField1: 123, core_field2: 'core', core_field3: 456)
+      end
+
+      it 'outputs valid with fields overridden' do
+        logger.with_fields = { core_field1: 'original', core_field2: 'original', err: 'original' }
+        logger.send(method, { msg: log_msg, data_id: 110, action: 'do', core_field1: 'override' })
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(data_id: 110, action: 'do', core_field1: 'override', core_field2: 'original', err: 'original')
+      end
     end
 
     context 'with data that does not contain msg' do
@@ -149,6 +163,17 @@ describe Ougai::Logger do
 
         expect(item).to be_log_message(log_msg, log_level)
         expect(item).to include_error('errmsg')
+      end
+
+      it 'outputs valid overridden err field' do
+        logger.with_fields = { err: 'original' }
+        begin
+          raise StandardError, 'errmsg2'
+        rescue => ex
+          logger.send(method, log_msg, ex)
+        end
+
+        expect(item).to include_error('errmsg2')
       end
     end
 

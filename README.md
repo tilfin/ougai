@@ -179,8 +179,8 @@ logger.info('Hello!', user: { name: 'Jiro' }, version: '2.3')
 ```
 
 ```json
-{"name":"test","hostname":"mypc","pid":30182,"level":20,"time":"2017-07-22T20:52:12.332+09:00","v":0,"version":"1.1.0","msg":"No message","user":{"name":"Taro","age":19}}
-{"name":"test","hostname":"goldest.local","pid":30308,"level":30,"time":"2017-07-22T20:53:54.314+09:00","v":0,"version":"2.3","user":{"name":"Jiro"},"msg":"Hello!"}
+{"name":"test","hostname":"mint","pid":30182,"level":20,"time":"2017-07-22T20:52:12.332+09:00","v":0,"version":"1.1.0","msg":"No message","user":{"name":"Taro","age":19}}
+{"name":"test","hostname":"mint","pid":30308,"level":30,"time":"2017-07-22T20:53:54.314+09:00","v":0,"version":"2.3","user":{"name":"Jiro"},"msg":"Hello!"}
 ```
 
 If any field of with_fields is specified in each log, the field is overridden.

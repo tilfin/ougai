@@ -9,8 +9,8 @@ module Ougai
       super(*args)
       @default_message = 'No message'
       @exc_key = :err
-      @formatter = create_formatter
       @with_fields = {}
+      @formatter = create_formatter
     end
 
     def debug(message = nil, ex = nil, data = nil, &block)

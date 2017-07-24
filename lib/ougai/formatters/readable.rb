@@ -3,12 +3,13 @@ require 'ougai/formatters/base'
 module Ougai
   module Formatters
     class Readable < Base
-      attr_accessor :plain, :trace_indent
+      attr_accessor :plain, :trace_indent, :excluded_fields
 
       def initialize(opts = {})
         super(opts[:app_name], opts[:hostname])
         @trace_indent = opts[:trace_indent] || 4
         @plain = opts[:plain] || false
+        @excluded_fields = opts[:excluded_fields] || []
         load_awesome_print
       end
 
@@ -16,12 +17,10 @@ module Ougai
         msg = data.delete(:msg)
         level = @plain ? severity : colored_level(severity)
         strs = ["[#{time.iso8601(3)}] #{level}: #{msg}"]
-        if data.key?(:err)
-          err = data.delete(:err)
-          err_str = "  #{err[:name]} (#{err[:message]}):"
-          err_str += "\n    " + err[:stack] if err.key?(:stack)
+        if err_str = create_err_str(data)
           strs.push(err_str)
         end
+        @excluded_fields.each { |f| data.delete(f) }
         unless data.empty?
           strs.push(data.ai({ plain: @plain }))
         end
@@ -42,6 +41,14 @@ module Ougai
           color = '0;37'
         end
         "\e[#{color}m#{severity}\e[0m"
+      end
+
+      def create_err_str(data)
+        return nil unless data.key?(:err)
+        err = data.delete(:err)
+        err_str = "  #{err[:name]} (#{err[:message]}):"
+        err_str += "\n    " + err[:stack] if err.key?(:stack)
+        err_str
       end
 
       private

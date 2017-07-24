@@ -61,4 +61,18 @@ describe Ougai::Formatters::Readable do
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include("error1.rb\n  error2.rb")
     end
   end
+
+  context 'when logger has excluded_fields' do
+    subject do
+      described_class.new(excluded_fields: [:status, :method]).call('DEBUG', Time.now, nil, data)
+    end
+
+    it 'includes valid strings' do
+      expect(subject).to include("\e[0;37mDEBUG\e[0m: Log Message!")
+      plain_subject = subject.gsub(/\e\[([;\d]+)?m/, '')
+      expect(plain_subject).to include(':path => "/"')
+      expect(plain_subject).not_to include(':status => 200')
+      expect(plain_subject).not_to include(':method => "GET"')
+    end
+  end
 end

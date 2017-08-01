@@ -184,6 +184,35 @@ logger.info('Hello!', user: { name: 'Jiro' }, version: '2.3')
 ```
 
 If any field of with_fields is specified in each log, the field is overridden.
+But if the field's type is *Array*, both with_field value and logging value are merged with `concat` and `uniq`.
+
+### Create a child logger
+
+`logger.child(with_fields)` creates a child logger of self. Its argument `with_fields` add to all logs the child logger outputs. A child logger can also create its child logger.
+
+```ruby
+logger = Ougai::Logger.new(STDOUT)
+logger.with_fields = { app: 'yourapp', tags: ['service'], kind: 'main' }
+
+child_logger = logger.child({ tags:['user'], kind: 'logic' })
+logger.info('Created child logger')
+
+child_logger.info('Created a user', name: 'Mike')
+
+gc_logger = child_logger.child({ kind: 'detail' })
+child_logger.info('Created grand child logger')
+
+gc_logger.debug('something detail', age: 34, weight: 72)
+```
+
+```json
+{"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service"],"kind":"main","msg":"Created child logger"}
+{"name":"Mike","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created a user"}
+{"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created grand child logger"}
+{"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","age":34,"weight":72,"msg":"something detail"}
+```
+
+If any field exists in both parent log and child log, the parent value is overridden or merged by child value.
 
 ## View log by node-bunyan
 

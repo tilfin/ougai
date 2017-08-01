@@ -1,9 +1,8 @@
-require 'ougai/formatters/bunyan'
-require 'logger'
-
 module Ougai
   class Logger < ::Logger
-    attr_accessor :default_message, :exc_key, :with_fields
+    include Logging
+
+    attr_accessor :default_message, :exc_key
 
     def initialize(*args)
       super(*args)
@@ -11,41 +10,6 @@ module Ougai
       @exc_key = :err
       @with_fields = {}
       @formatter = create_formatter
-    end
-
-    def debug(message = nil, ex = nil, data = nil, &block)
-      return true if level > DEBUG
-      args = block ? yield : [message, ex, data]
-      add(DEBUG, build_log(args))
-    end
-
-    def info(message = nil, ex = nil, data = nil, &block)
-      return true if level > INFO
-      args = block ? yield : [message, ex, data]
-      add(INFO, build_log(args))
-    end
-
-    def warn(message = nil, ex = nil, data = nil, &block)
-      return true if level > WARN
-      args = block ? yield : [message, ex, data]
-      add(WARN, build_log(args))
-    end
-
-    def error(message = nil, ex = nil, data = nil, &block)
-      return true if level > ERROR
-      args = block ? yield : [message, ex, data]
-      add(ERROR, build_log(args))
-    end
-
-    def fatal(message = nil, ex = nil, data = nil, &block)
-      return true if level > FATAL
-      args = block ? yield : [message, ex, data]
-      add(FATAL, build_log(args))
-    end
-
-    def unknown(message = nil, ex = nil, data = nil, &block)
-      args = block ? yield : [message, ex, data]
-      add(UNKNOWN, build_log(args))
     end
 
     def self.broadcast(logger)
@@ -61,16 +25,22 @@ module Ougai
       end
     end
 
+    def chain(severity, args, fields)
+      write(severity, args, merge_fields(@with_fields, fields))
+    end
+
     protected
+
+    def append(severity, args)
+      write(severity, args, @with_fields)
+    end
 
     def create_formatter
       Formatters::Bunyan.new
     end
 
-    private
-
-    def build_log(args)
-      @with_fields.merge(to_item(args))
+    def write(severity, args, fields)
+      add(severity, merge_fields(fields, to_item(args)))
     end
 
     def to_item(args)
@@ -86,6 +56,8 @@ module Ougai
         { msg: @default_message }
       end
     end
+
+    private
 
     def create_item_with_1arg(msg)
       item = {}

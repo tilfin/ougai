@@ -52,7 +52,7 @@ module Ougai
     end
 
     def merge_fields(base_data, new_data)
-      base_data.merge(new_data) do |key, base_val, new_val|
+      base_data.merge(new_data) do |_, base_val, new_val|
         if base_val.is_a?(Array) and new_val.is_a?(Array)
           (base_val + new_val).uniq
         else

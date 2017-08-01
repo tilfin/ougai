@@ -1,5 +1,8 @@
+require 'logger'
 require 'ougai/version'
 require 'ougai/formatters/base'
 require 'ougai/formatters/bunyan'
 require 'ougai/formatters/readable'
+require 'ougai/logging'
+require 'ougai/child_logger'
 require 'ougai/logger'

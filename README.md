@@ -214,6 +214,28 @@ gc_logger.debug('something detail', age: 34, weight: 72)
 
 If any field exists in both parent log and child log, the parent value is overridden or merged by child value.
 
+### Hook before logging
+
+Setting `before_log` of logger or child an *lambda* with `data` field, a process can be run before log each output.
+
+* Adding variable data (like Thread ID) to logging data can be defined in common.
+* Returning `false` in *lambda*, the log is cancelled and does not output.
+* The *before_log* of child logger is run ahead of the parent logger's.
+
+```ruby
+logger.before_log = lambda do |data|
+  data[:thread_id] = Thread.current.object_id.to_s(36)
+end
+
+logger.debug('on main thread')
+Thread.new { logger.debug('on another thread') }
+```
+
+```json
+{"name":"main","hostname":"mint","pid":13975,"level":20,"time":"2017-08-06T15:35:53.435+09:00","v":0,"msg":"on main thread","thread_id":"gqe0ava6c"}
+{"name":"main","hostname":"mint","pid":13975,"level":20,"time":"2017-08-06T15:35:53.435+09:00","v":0,"msg":"on another thread","thread_id":"gqe0cb14g"}
+```
+
 ## View log by node-bunyan
 
 Install [bunyan](https://github.com/trentm/node-bunyan) via NPM

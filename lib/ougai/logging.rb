@@ -1,6 +1,7 @@
 module Ougai
   module Logging
     attr_accessor :with_fields
+    attr_writer :before_log
 
     def debug(message = nil, ex = nil, data = nil, &block)
       return true if level > Logger::DEBUG
@@ -41,7 +42,7 @@ module Ougai
       ChildLogger.new(self, fields)
     end
 
-    def chain(severity, args, fields)
+    def chain(_severity, _args, _fields, _hooks)
       raise NotImplementedError
     end
 

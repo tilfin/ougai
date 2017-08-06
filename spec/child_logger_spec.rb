@@ -297,4 +297,60 @@ describe Ougai::ChildLogger do
       end
     end
   end
+
+  describe '#before_log' do
+    let(:logger) { parent_logger.child }
+    let(:log_msg) { 'before_log test' }
+
+    before do
+      parent_logger.level = Logger::INFO
+    end
+
+    context 'child logger to be set before_log' do
+      before do
+        logger.before_log = lambda do |data|
+          data[:context_id] = 123
+        end
+      end
+
+      it 'outputs the field to be added in before_log' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include(context_id: 123)
+      end
+    end
+
+    context 'parent logger to be set before_log' do
+      before do
+        parent_logger.before_log = lambda do |data|
+          data[:context_id] = 12345
+        end
+      end
+
+      it 'outputs the field to be added in before_log' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include(context_id: 12345)
+      end
+    end
+
+    context 'both child logger and parent logger to be set before_log' do
+      before do
+        logger.before_log = lambda do |data|
+          data[:context_id] = 67890
+          data[:context_name] = 'sub'
+        end
+        parent_logger.before_log = lambda do |data|
+          data[:context_id] = 12345
+        end
+      end
+
+      it 'outputs the fields to be added in each before_log' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include(context_id: 12345) # parent
+        expect(item).to include(context_name: 'sub') # child
+      end
+    end
+  end
 end

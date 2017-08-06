@@ -483,4 +483,37 @@ describe Ougai::Logger do
       end
     end
   end
+
+  describe '#before_log' do
+    let(:log_msg) { 'before_log test' }
+
+    context 'set context data' do
+      before do
+        logger.level = Logger::INFO
+        logger.before_log = lambda do |data|
+          data[:context_id] = 123
+        end
+      end
+
+      it 'outputs with context data' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include(context_id: 123)
+      end
+    end
+
+    context 'cancelling log' do
+      before do
+        logger.level = Logger::INFO
+        logger.before_log = lambda do |data|
+          false
+        end
+      end
+
+      it 'outputs none' do
+        logger.info(log_msg)
+        expect(item).to be_nil
+      end
+    end
+  end
 end

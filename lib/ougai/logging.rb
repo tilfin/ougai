@@ -42,7 +42,7 @@ module Ougai
       ChildLogger.new(self, fields)
     end
 
-    def chain(severity, args, fields, hooks)
+    def chain(_severity, _args, _fields, _hooks)
       raise NotImplementedError
     end
 

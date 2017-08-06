@@ -44,7 +44,7 @@ module Ougai
     def write(severity, args, fields, hooks)
       data = merge_fields(fields, to_item(args))
       hooks.each do |hook|
-        return if hook.call(data) == false
+        return false if hook.call(data) == false
       end
       add(severity, data)
     end

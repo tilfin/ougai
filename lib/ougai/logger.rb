@@ -25,22 +25,28 @@ module Ougai
       end
     end
 
-    def chain(severity, args, fields)
-      write(severity, args, merge_fields(@with_fields, fields))
+    def chain(severity, args, fields, hooks)
+      hooks.push(@before_log) if @before_log
+      write(severity, args, merge_fields(@with_fields, fields), hooks)
     end
 
     protected
 
     def append(severity, args)
-      write(severity, args, @with_fields)
+      hooks = @before_log ? [@before_log] : []
+      write(severity, args, @with_fields, hooks)
     end
 
     def create_formatter
       Formatters::Bunyan.new
     end
 
-    def write(severity, args, fields)
-      add(severity, merge_fields(fields, to_item(args)))
+    def write(severity, args, fields, hooks)
+      data = merge_fields(fields, to_item(args))
+      hooks.each do |hook|
+        return if hook.call(data) == false
+      end
+      add(severity, data)
     end
 
     def to_item(args)

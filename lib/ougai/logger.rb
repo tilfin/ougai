@@ -22,6 +22,11 @@ module Ougai
             super(*args)
           end
         end
+
+        define_method(:level=) do |level|
+          logger.level = level
+          super(level)
+        end
       end
     end
 

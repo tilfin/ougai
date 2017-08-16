@@ -27,6 +27,11 @@ module Ougai
           logger.level = level
           super(level)
         end
+
+        define_method(:close) do
+          logger.close
+          super()
+        end
       end
     end
 

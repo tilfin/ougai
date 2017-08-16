@@ -613,5 +613,11 @@ describe Ougai::Logger do
         expect(another_item).to be_log_message(log_msg, 40)
       end
     end
+
+    it 'close both loogers' do
+      logger.close
+      expect(io.closed?).to be_truthy
+      expect(another_io.closed?).to be_truthy
+    end
   end
 end

@@ -516,4 +516,102 @@ describe Ougai::Logger do
       end
     end
   end
+
+  describe '#broadcast' do
+    let(:log_msg) { 'broadcast test message' }
+
+    let(:another_io) { StringIO.new }
+    let(:another_logger) { described_class.new(another_io) }
+
+    let(:another_item) do
+      log_str = another_io.string
+      begin
+        JSON.parse(log_str, symbolize_names: true)
+      rescue Exception => e
+        nil
+      end 
+    end
+
+    before do
+      logger.extend Ougai::Logger.broadcast(another_logger)
+    end
+
+    context 'another logger level is the same as original one' do
+      before do
+        logger.level = Logger::INFO # propagate serverity to another one
+      end
+
+      it 'does not output debug log on both loggers' do
+        logger.debug(log_msg, foo: 1)
+        expect(item).to be_nil
+        expect(another_item).to be_nil
+      end
+
+      it 'does not output debug log with block on both loggers' do
+        logger.debug { [log_msg, foo: 1] }
+        expect(item).to be_nil
+        expect(another_item).to be_nil
+      end
+
+      it 'outputs info log on both loggers' do
+        logger.info(log_msg, foo: 2)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include_data(foo: 2)
+        expect(another_item).to be_log_message(log_msg, 30)
+        expect(another_item).to include_data(foo: 2)
+      end
+
+      it 'outputs info log with block on both loggers' do
+        logger.info(log_msg, foo: 2)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(item).to include_data(foo: 2)
+        expect(another_item).to be_log_message(log_msg, 30)
+        expect(another_item).to include_data(foo: 2)
+      end
+
+      it 'outputs warning log on both loggers' do
+        logger.warn(log_msg)
+        expect(item).to be_log_message(log_msg, 40)
+        expect(another_item).to be_log_message(log_msg, 40)
+      end
+    end
+
+    context 'another logger level is lower than original one' do
+      before do
+        logger.level = Logger::INFO
+        another_logger.level = Logger::DEBUG
+      end
+
+      it 'outputs debug log on only another logger' do
+        logger.debug(log_msg)
+        expect(item).to be_nil
+        expect(another_item).to be_log_message(log_msg, 20)
+      end
+
+      it 'outputs info log on both loggers' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(another_item).to be_log_message(log_msg, 30)
+      end
+    end
+
+    context 'another logger level is greater than original one' do
+      before do
+        logger.level = Logger::INFO
+        another_logger.level = Logger::WARN
+      end
+
+      it 'outputs info log on only original logger' do
+        logger.info(log_msg)
+        expect(item).to be_log_message(log_msg, 30)
+        expect(another_item).to be_nil
+      end
+
+      it 'outputs warning log on both loggers' do
+        logger.warn(log_msg)
+        expect(item).to be_log_message(log_msg, 40)
+        expect(another_item).to be_log_message(log_msg, 40)
+      end
+    end
+  end
 end

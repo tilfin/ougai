@@ -236,6 +236,47 @@ Thread.new { logger.debug('on another thread') }
 {"name":"main","hostname":"mint","pid":13975,"level":20,"time":"2017-08-06T15:35:53.435+09:00","v":0,"msg":"on another thread","thread_id":"gqe0cb14g"}
 ```
 
+### Using broadcast, log output plural targets
+
+`Ougai::Logger.broadcast` can be used to like `ActiveSupport::Logger.broadcast`.
+
+#### An example
+
+Original `logger` outputs STDOUT and `error_logger` outputs `./error.log`.
+Every calling for `logger` is propagated to `error_logger`.
+
+```ruby
+logger = Ougai::Logger.new(STDOUT)
+
+error_logger = Ougai::Logger.new('./error.log')
+logger.extend Ougai::Logger.broadcast(error_logger)
+
+logger.level = Logger::INFO
+logger.info('Hello!')
+
+error_logger.level = Logger::ERROR
+logger.error('Failed to do something.')
+
+logger.level = Logger::WARN # error_logger level is also set WARN by propagation
+logger.warn('Ignored something.')
+```
+
+##### STDOUT
+
+```json
+{"name":"main","hostname":"mint","pid":24915,"level":30,"time":"2017-08-16T17:23:42.415+09:00","v":0,"msg":"Hello!"}
+{"name":"main","hostname":"mint","pid":24915,"level":50,"time":"2017-08-16T17:23:42.416+09:00","v":0,"msg":"Failed to do something."}
+{"name":"main","hostname":"mint","pid":24915,"level":40,"time":"2017-08-16T17:23:42.416+09:00","v":0,"msg":"Ignored something."}
+```
+
+##### error.log
+
+```json
+{"name":"main","hostname":"mint","pid":24915,"level":50,"time":"2017-08-16T17:23:42.415+09:00","v":0,"msg":"Failed to do something."}
+{"name":"main","hostname":"mint","pid":24915,"level":40,"time":"2017-08-16T17:23:42.416+09:00","v":0,"msg":"Ignored something."}
+```
+
+
 ## View log by node-bunyan
 
 Install [bunyan](https://github.com/trentm/node-bunyan) via NPM

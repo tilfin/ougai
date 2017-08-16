@@ -4,33 +4,23 @@ module Ougai
     attr_writer :before_log
 
     def debug(message = nil, ex = nil, data = nil, &block)
-      return true if level > Logger::DEBUG
-      args = block ? yield : [message, ex, data]
-      append(Logger::DEBUG, args)
+      log(Logger::DEBUG, message, ex, data, block)
     end
 
     def info(message = nil, ex = nil, data = nil, &block)
-      return true if level > Logger::INFO
-      args = block ? yield : [message, ex, data]
-      append(Logger::INFO, args)
+      log(Logger::INFO, message, ex, data, block)
     end
 
     def warn(message = nil, ex = nil, data = nil, &block)
-      return true if level > Logger::WARN
-      args = block ? yield : [message, ex, data]
-      append(Logger::WARN, args)
+      log(Logger::WARN, message, ex, data, block)
     end
 
     def error(message = nil, ex = nil, data = nil, &block)
-      return true if level > Logger::ERROR
-      args = block ? yield : [message, ex, data]
-      append(Logger::ERROR, args)
+      log(Logger::ERROR, message, ex, data, block)
     end
 
     def fatal(message = nil, ex = nil, data = nil, &block)
-      return true if level > Logger::FATAL
-      args = block ? yield : [message, ex, data]
-      append(Logger::FATAL, args)
+      log(Logger::FATAL, message, ex, data, block)
     end
 
     def unknown(message = nil, ex = nil, data = nil, &block)
@@ -60,6 +50,14 @@ module Ougai
           new_val
         end
       end
+    end
+
+    private
+
+    def log(severity, message, ex, data, block)
+      return true if level > severity
+      args = block ? block.call : [message, ex, data]
+      append(severity, args)
     end
   end
 end

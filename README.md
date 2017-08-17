@@ -6,7 +6,7 @@ Ougai
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
-A JSON logging system is capable of handling a message, data or an exception easily.
+A structured JSON logging system is capable of handling a message, structured data or an exception easily.
 It is compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js.
 It can also output human readable format for the console.
 

@@ -327,79 +327,6 @@ logger.formatter = Ougai::Formatters::Readable.new
 ![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true)
 
 
-## Use on Rails
-
-### Define a custom logger
-
-Add following code to `lib/your_app/logger.rb`
-A custom logger includes LoggerSilence because Rails logger must support `silence` feature.
-
-```ruby
-module YourApp
-  class Logger < Ougai::Logger
-    include ActiveSupport::LoggerThreadSafeLevel
-    include LoggerSilence
-
-    def initialize(*args)
-      super
-      after_initialize if respond_to? :after_initialize
-    end
-
-    def create_formatter
-      if Rails.env.development? || Rails.env.test?
-        Ougai::Formatters::Readable.new
-      else
-        Ougai::Formatters::Bunyan.new
-      end
-    end
-  end
-end
-```
-
-### for Development
-
-Add following code to `config/environments/development.rb`
-
-```ruby
-Rails.application.configure do
-  ...
-
-  config.logger = YourApp::Logger.new(STDOUT)
-end
-```
-
-### for Production
-
-Add following code to the end block of `config/environments/production.rb`
-
-```ruby
-Rails.application.configure do
-  ...
-
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    config.logger = YourApp::Logger.new(STDOUT)
-  else
-    config.logger = YourApp::Logger.new(config.paths['log'].first)
-  end
-end
-```
-
-### With Lograge
-
-You must modify [lograge](https://github.com/roidrage/lograge) formatter like *Raw*.
-The following code set request data to `request` field of JSON.
-
-```ruby
-Rails.application.configure do
-  config.lograge.enabled = true
-  config.lograge.formatter = Class.new do |fmt|
-    def fmt.call(data)
-      { msg: 'Request', request: data }
-    end
-  end
-end
-```
-
 ### Output example on development
 
 If you modify `application_controller.rb` as
@@ -437,6 +364,11 @@ logger outputs
     }
 }
 ```
+
+## How to use with famous products and libraries
+
+- [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger)
+- [Customize Sidekiq logger](https://github.com/tilfin/ougai/wiki/Customize-Sidekiq-logger)
 
 ## License
 

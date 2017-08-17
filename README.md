@@ -369,6 +369,7 @@ logger outputs
 
 - [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger)
 - [Customize Sidekiq logger](https://github.com/tilfin/ougai/wiki/Customize-Sidekiq-logger)
+- [Forward logs to Fluentd](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Fluentd)
 
 ## License
 

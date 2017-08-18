@@ -4,11 +4,12 @@ require 'json'
 module Ougai
   module Formatters
     class Bunyan < Base
-      attr_accessor :jsonize
+      attr_accessor :jsonize, :with_newline
 
       def initialize
         super
         @jsonize = true
+        @with_newline = true
       end
 
       def call(severity, time, progname, data)
@@ -44,7 +45,9 @@ module Ougai
       def dump(data)
         return data unless @jsonize
         data[:time] = data[:time].iso8601(3)
-        JSON.generate(data) + "\n"
+        str = JSON.generate(data)
+        str << "\n" if @with_newline
+        str
       end
     end
   end

@@ -6,9 +6,9 @@ Ougai
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
-A structured JSON logging system is capable of handling a message, structured data or an exception easily.
-It is compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js.
-It can also output human readable format for the console.
+A structured logging system is capable of handling a message, structured data or an exception easily.
+It has JSON formatter compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js and
+human readable formatter with [Awesome Print](https://github.com/awesome-print/awesome_print) for console.
 
 ## Installation
 
@@ -32,7 +32,8 @@ $ gem install ougai
 
 ## Usage
 
-**Ougai::Logger** is sub-class of original [Logger](https://docs.ruby-lang.org/ja/latest/class/Logger.html) in Ruby.
+**Ougai::Logger** is sub-class of original [Logger](https://ruby-doc.org/stdlib-2.4.1/libdoc/logger/rdoc/Logger.html) in Ruby.
+All arguments of the `initialize` pass through itself to **::Logger**.
 
 ```ruby
 require 'rubygems'
@@ -51,7 +52,7 @@ logger.info('Information!')
 {"name":"main","hostname":"mint","pid":14607,"level":30,"time":"2016-10-16T22:26:48.835+09:00","v":0,"msg":"Information!"}
 ```
 
-### log only a data
+### log only structured data
 
 ```ruby
 logger.info({
@@ -277,9 +278,9 @@ logger.warn('Ignored something.')
 ```
 
 
-## View log by node-bunyan
+## View logs with node-bunyan
 
-Install [bunyan](https://github.com/trentm/node-bunyan) via NPM
+Install [bunyan](https://github.com/trentm/node-bunyan) via npm
 
 ```
 $ npm install -g bunyan
@@ -327,49 +328,12 @@ logger.formatter = Ougai::Formatters::Readable.new
 ![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true)
 
 
-### Output example on development
+## How to use with famous products, services and libraries
 
-If you modify `application_controller.rb` as
-
-```ruby
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
-
-  def hello
-    logger.debug 'Call action', somefield: 'somevalue'
-    render plain: 'Hello!'
-  end
-end
-```
-
-logger outputs
-
-```
-[2016-11-03T15:11:24.847+09:00] DEBUG: Call action
-{
-    :somefield => "somevalue"
-}
-[2016-11-03T15:11:24.872+09:00] INFO: Request
-{
-    :request => {
-            :method => "GET",
-              :path => "/",
-            :format => :html,
-        :controller => "ApplicationController",
-            :action => "hello",
-            :status => 200,
-          :duration => 30.14,
-              :view => 3.35,
-                :db => 0.0
-    }
-}
-```
-
-## How to use with famous products and libraries
-
-- [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger)
+- [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger) and apply the request with [Lograge](https://github.com/roidrage/lograge)
 - [Customize Sidekiq logger](https://github.com/tilfin/ougai/wiki/Customize-Sidekiq-logger)
 - [Forward logs to Fluentd](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Fluentd)
+- [Forward logs to Logentries](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Logentries)
 
 ## License
 

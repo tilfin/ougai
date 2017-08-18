@@ -6,9 +6,9 @@ Ougai
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
-A structured JSON logging system is capable of handling a message, structured data or an exception easily.
-It is compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js.
-It can also output human readable format for the console.
+A structured logging system is capable of handling a message, structured data or an exception easily.
+It has JSON formatter compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js and
+human readable formatter with [Awesome Print](https://github.com/awesome-print/awesome_print) for console.
 
 ## Installation
 
@@ -365,11 +365,12 @@ logger outputs
 }
 ```
 
-## How to use with famous products and libraries
+## How to use with famous products, services and libraries
 
-- [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger)
+- [Use as Rails logger](https://github.com/tilfin/ougai/wiki/Use-as-Rails-logger) and apply the request with [Lograge](https://github.com/roidrage/lograge)
 - [Customize Sidekiq logger](https://github.com/tilfin/ougai/wiki/Customize-Sidekiq-logger)
 - [Forward logs to Fluentd](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Fluentd)
+- [Forward logs to Logentries](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Logentries)
 
 ## License
 

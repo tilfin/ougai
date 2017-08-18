@@ -9,10 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Toshimitsu Takahashi"]
   spec.email         = ["toshi@tilfin.com"]
 
-  spec.summary       = %q{JSON logger compatible with node-bunyan is capable of handling data easily.}
+  spec.summary       = %q{structured JSON logger compatible with node-bunyan is capable of handling data easily.}
   spec.description = <<-EOF
-    A JSON logging system is capable of handling a message, data or an exception easily.
-    It is compatible with Bunyan for Node.js and can also output human readable format for console.
+    A structured logging system is capable of handling a message, custom data or an exception easily.
+    It has JSON formatter compatible with Bunyan for Node.js and human readable formatter with Awesome Print for console.
   EOF
   spec.homepage      = "https://github.com/tilfin/ougai"
   spec.license       = "MIT"

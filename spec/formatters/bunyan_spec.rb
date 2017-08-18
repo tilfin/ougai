@@ -20,16 +20,18 @@ describe Ougai::Formatters::Bunyan do
 
   let(:formatter) { described_class.new }
 
-  context 'when severity is DEBUG' do
-    subject { JSON.parse(formatter.call('DEBUG', Time.now, nil, data).chomp, symbolize_names: true) }
+  context 'jsonize is true and with_newline is true' do
+    subject { formatter.call('DEBUG', Time.now, nil, data) }
 
     it 'includes valid strings' do
-      expect(subject).to include(data.merge(level: 20))
-      expect(subject[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+      expect(subject).to end_with("\n")
+      result = JSON.parse(subject.chomp, symbolize_names: true)
+      expect(result).to include(data.merge(level: 20))
+      expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
     end
   end
 
-  context 'jsonize is falsey' do
+  context 'jsonize is false' do
     before do
       formatter.jsonize = false
     end
@@ -79,4 +81,20 @@ describe Ougai::Formatters::Bunyan do
       end
     end
   end
+
+  context 'with_newline is false' do
+    before do
+      formatter.with_newline = false
+    end
+
+    subject { formatter.call('INFO', Time.now, nil, data) }
+
+    it 'includes valid strings' do
+      expect(subject).not_to end_with("\n")
+      result = JSON.parse(subject, symbolize_names: true)
+      expect(result).to include(data.merge(level: 30))
+      expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+    end
+  end
+
 end

@@ -2,6 +2,10 @@ require 'ougai/formatters/base'
 
 module Ougai
   module Formatters
+    # A human readble formatter with awesome_print
+    # @attr [Boolean] plain Whether log should be plain not colorized (by default this is off).
+    # @attr [Fixnum] trace_indent The indent space size (by default this is 4).
+    # @attr [Array<String, Symbol>] excluded_fields The fields excluded from all logs.
     class Readable < Base
       attr_accessor :plain, :trace_indent, :excluded_fields
 

@@ -1,4 +1,9 @@
 module Ougai
+  # Main Logger
+  # @attr [String] default_message Use this if log message is not specified (by default this is 'No message').
+  # @attr [String] exc_key The field name of Exception (by default this is :err).
+  # @attr [Hash] with_fields The fields appending to all logs.
+  # @attr [Proc] before_log Hook before logging.
   class Logger < ::Logger
     include Logging
 
@@ -12,6 +17,8 @@ module Ougai
       @formatter = create_formatter
     end
 
+    # Broadcasts the same logs to the another logger
+    # @param logger [Logger] The logger receiving broadcast logs.
     def self.broadcast(logger)
       Module.new do |mdl|
         ::Logger::Severity.constants.each do |severity|
@@ -35,6 +42,7 @@ module Ougai
       end
     end
 
+    # @private
     def chain(severity, args, fields, hooks)
       hooks.push(@before_log) if @before_log
       write(severity, args, merge_fields(@with_fields, fields), hooks)
@@ -42,6 +50,7 @@ module Ougai
 
     protected
 
+    # @private
     def append(severity, args)
       hooks = @before_log ? [@before_log] : []
       write(severity, args, @with_fields, hooks)
@@ -50,6 +59,8 @@ module Ougai
     def create_formatter
       Formatters::Bunyan.new
     end
+
+    private
 
     def write(severity, args, fields, hooks)
       data = merge_fields(fields, to_item(args))
@@ -72,8 +83,6 @@ module Ougai
         { msg: @default_message }
       end
     end
-
-    private
 
     def create_item_with_1arg(msg)
       item = {}

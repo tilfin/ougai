@@ -3,6 +3,9 @@ require 'json'
 
 module Ougai
   module Formatters
+    # A JSON formatter compatible with node-bunyan
+    # @attr [Boolean] jsonize Whether log should converts JSON (by default this is on).
+    # @attr [Boolean] with_newline Whether tailing NL should be appended (by default this is on).
     class Bunyan < Base
       attr_accessor :jsonize, :with_newline
 

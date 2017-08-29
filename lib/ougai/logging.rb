@@ -1,53 +1,51 @@
 module Ougai
-  # Logging
+  # Common Logging features
   module Logging
     attr_accessor :with_fields
     attr_writer :before_log
 
     # Log any one or more of a message, an exception and structured data as DEBUG.
+    # If the block is given for delay evaluation, it returns them as an array or the one of them as a value.
     # @param message [String] The message to log. Use default_message if not specified.
     # @param ex [Exception] The exception or the error
     # @param data [Object] Any structured data
+    # @yieldreturn [String|Exception|Object|Array] Any one or more of former parameters
+    # @return [Boolean] true
     def debug(message = nil, ex = nil, data = nil, &block)
       log(Logger::DEBUG, message, ex, data, block)
     end
 
     # Log any one or more of a message, an exception and structured data as INFO.
-    # @param message [String] The message to log. Use default_message if not specified.
-    # @param ex [Exception] The exception or the error
-    # @param data [Object] Any structured data
+    # @return [Boolean] true
+    # @see Logging#debug
     def info(message = nil, ex = nil, data = nil, &block)
       log(Logger::INFO, message, ex, data, block)
     end
 
     # Log any one or more of a message, an exception and structured data as WARN.
-    # @param message [String] The message to log. Use default_message if not specified.
-    # @param ex [Exception] The exception or the error
-    # @param data [Object] Any structured data
+    # @return [Boolean] true
+    # @see Logging#debug
     def warn(message = nil, ex = nil, data = nil, &block)
       log(Logger::WARN, message, ex, data, block)
     end
 
     # Log any one or more of a message, an exception and structured data as ERROR.
-    # @param message [String] The message to log. Use default_message if not specified.
-    # @param ex [Exception] The exception or the error
-    # @param data [Object] Any structured data
+    # @return [Boolean] true
+    # @see Logging#debug
     def error(message = nil, ex = nil, data = nil, &block)
       log(Logger::ERROR, message, ex, data, block)
     end
 
     # Log any one or more of a message, an exception and structured data as FATAL.
-    # @param message [String] The message to log. Use default_message if not specified.
-    # @param ex [Exception] The exception or the error
-    # @param data [Object] Any structured data
+    # @return [Boolean] true
+    # @see Logging#debug
     def fatal(message = nil, ex = nil, data = nil, &block)
       log(Logger::FATAL, message, ex, data, block)
     end
 
     # Log any one or more of a message, an exception and structured data as UNKNOWN.
-    # @param message [String] The message to log. Use default_message if not specified.
-    # @param ex [Exception] The exception or the error
-    # @param data [Object] Any structured data
+    # @return [Boolean] true
+    # @see Logging#debug
     def unknown(message = nil, ex = nil, data = nil, &block)
       args = block ? yield : [message, ex, data]
       append(Logger::UNKNOWN, args)

@@ -36,6 +36,15 @@ describe Ougai::Formatters::Bunyan do
       formatter.jsonize = false
     end
 
+    context 'when severity is TRACE' do
+      subject { formatter.call('TRACE', Time.now, nil, data) }
+
+      it 'includes valid hash' do
+        expect(subject).to include(data.merge(level: 10))
+        expect(subject[:time]).to be_an_instance_of(Time)
+      end
+    end
+
     context 'when severity is DEBUG' do
       subject { formatter.call('DEBUG', Time.now, nil, data) }
 

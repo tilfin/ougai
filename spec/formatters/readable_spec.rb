@@ -18,6 +18,15 @@ describe Ougai::Formatters::Readable do
     }
   end
 
+  context 'when severity is TRACE' do
+    subject { described_class.new.call('TRACE', Time.now, nil, data) }
+
+    it 'includes valid strings' do
+      expect(subject).to include("\e[0;34mTRACE\e[0m: Log Message!")
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':status => 200')
+    end
+  end
+
   context 'when severity is DEBUG' do
     subject { described_class.new.call('DEBUG', Time.now, nil, data) }
 

@@ -42,6 +42,20 @@ module Ougai
       end
     end
 
+    def level=(severity)
+      if severity.is_a?(Integer)
+        @level = severity
+        return
+      end
+
+      if severity.to_s.downcase == 'trace'
+        @level = TRACE
+        return
+      end
+
+      super
+    end
+
     # @private
     def chain(severity, args, fields, hooks)
       hooks.push(@before_log) if @before_log
@@ -61,6 +75,10 @@ module Ougai
     end
 
     private
+
+    def format_severity(severity)
+      to_label(severity)
+    end
 
     def write(severity, args, fields, hooks)
       data = merge_fields(fields, to_item(args))

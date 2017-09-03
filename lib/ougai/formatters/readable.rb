@@ -33,6 +33,10 @@ module Ougai
 
       def colored_level(severity)
         case severity
+        when 'TRACE'
+          color = '0;34'
+        when 'DEBUG'
+          color = '0;37'
         when 'INFO'
           color = '0;36'
         when 'WARN'
@@ -41,8 +45,8 @@ module Ougai
           color = '0;31'
         when 'FATAL'
           color = '0;35'
-        else # DEBUG
-          color = '0;37'
+        else
+          color = '0;32'
         end
         "\e[#{color}m#{severity}\e[0m"
       end

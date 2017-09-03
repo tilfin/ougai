@@ -28,6 +28,10 @@ module Ougai
 
       def to_level(severity)
         case severity
+        when 'TRACE'
+          10
+        when 'DEBUG'
+          20
         when 'INFO'
           30
         when 'WARN'
@@ -36,10 +40,8 @@ module Ougai
           50
         when 'FATAL'
           60
-        when 'ANY'
+        else
           70
-        else # DEBUG
-          20
         end
       end
 

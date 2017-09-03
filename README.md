@@ -42,6 +42,14 @@ require 'ougai'
 logger = Ougai::Logger.new(STDOUT)
 ```
 
+### TRACE level
+
+The `level` of logger supports **TRACE** level lower than **DEBUG**.
+
+```ruby
+logger.level = Ougai::Logger::TRACE # , :trace or 'trace'
+```
+
 ### log only a message
 
 ```ruby
@@ -334,6 +342,7 @@ logger.formatter = Ougai::Formatters::Readable.new
 - [Customize Sidekiq logger](https://github.com/tilfin/ougai/wiki/Customize-Sidekiq-logger)
 - [Forward logs to Fluentd](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Fluentd)
 - [Forward logs to Logentries](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Logentries)
+- [Use as ServerEngine logger](https://github.com/tilfin/ougai/wiki/Use-as-ServerEngine-logger)
 
 ## License
 

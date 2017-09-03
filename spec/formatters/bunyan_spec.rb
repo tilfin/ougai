@@ -89,6 +89,14 @@ describe Ougai::Formatters::Bunyan do
         expect(subject[:time]).to be_an_instance_of(Time)
       end
     end
+
+    context 'when severity is UNKNOWN' do
+      subject { formatter.call('ANY', Time.now, nil, { msg: 'unknown msg' }) }
+
+      it 'includes valid hash' do
+        expect(subject).to include(level: 70, msg: 'unknown msg')
+      end
+    end
   end
 
   context 'with_newline is false' do

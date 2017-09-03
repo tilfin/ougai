@@ -71,6 +71,13 @@ describe Ougai::Formatters::Readable do
     end
   end
 
+  context 'when severity is UNKNOWN' do
+    subject { described_class.new.call('ANY', Time.now, nil, { msg: 'unknown msg' }) }
+    it 'includes valid strings' do
+      expect(subject).to include("\e[0;32mANY\e[0m: unknown msg")
+    end
+  end
+
   context 'when logger has excluded_fields' do
     subject do
       described_class.new(excluded_fields: [:status, :method]).call('DEBUG', Time.now, nil, data)

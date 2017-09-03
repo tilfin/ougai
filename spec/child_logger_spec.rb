@@ -45,6 +45,14 @@ describe Ougai::ChildLogger do
         logger.info(log_msg)
         expect(item).to be_log_message(log_msg, 30)
       end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_truthy
+        expect(logger.info?).to be_truthy
+        expect(logger.warn?).to be_truthy
+        expect(logger.error?).to be_truthy
+        expect(logger.fatal?).to be_truthy
+      end
     end
 
     context 'INFO' do
@@ -64,6 +72,14 @@ describe Ougai::ChildLogger do
       it 'outputs warning message' do
         logger.warn(log_msg)
         expect(item).to be_log_message(log_msg, 40)
+      end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_falsey
+        expect(logger.info?).to be_truthy
+        expect(logger.warn?).to be_truthy
+        expect(logger.error?).to be_truthy
+        expect(logger.fatal?).to be_truthy
       end
     end
 
@@ -85,6 +101,14 @@ describe Ougai::ChildLogger do
         logger.error(log_msg)
         expect(item).to be_log_message(log_msg, 50)
       end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_falsey
+        expect(logger.info?).to be_falsey
+        expect(logger.warn?).to be_truthy
+        expect(logger.error?).to be_truthy
+        expect(logger.fatal?).to be_truthy
+      end
     end
 
     context 'ERROR' do
@@ -104,6 +128,14 @@ describe Ougai::ChildLogger do
       it 'outputs fatal message' do
         logger.fatal(log_msg)
         expect(item).to be_log_message(log_msg, 60)
+      end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_falsey
+        expect(logger.info?).to be_falsey
+        expect(logger.warn?).to be_falsey
+        expect(logger.error?).to be_truthy
+        expect(logger.fatal?).to be_truthy
       end
     end
 
@@ -125,6 +157,14 @@ describe Ougai::ChildLogger do
         logger.unknown(log_msg)
         expect(item).to be_log_message(log_msg, 70)
       end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_falsey
+        expect(logger.info?).to be_falsey
+        expect(logger.warn?).to be_falsey
+        expect(logger.error?).to be_falsey
+        expect(logger.fatal?).to be_truthy
+      end
     end
 
     context 'UNKNOWN' do
@@ -139,6 +179,14 @@ describe Ougai::ChildLogger do
       it 'outputs unknown message' do
         logger.unknown(log_msg)
         expect(item).to be_log_message(log_msg, 70)
+      end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.debug?).to be_falsey
+        expect(logger.info?).to be_falsey
+        expect(logger.warn?).to be_falsey
+        expect(logger.error?).to be_falsey
+        expect(logger.fatal?).to be_falsey
       end
     end
   end

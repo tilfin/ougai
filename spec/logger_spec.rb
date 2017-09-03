@@ -232,12 +232,36 @@ describe Ougai::Logger do
     end
   end
 
+  describe '#trace' do
+    let(:log_level) { 10 }
+    let(:log_msg) { 'trace message' }
+    let(:method) { 'trace' }
+
+    before { logger.level = :trace }
+
+    it_behaves_like 'log'
+
+    it 'is consistent with the methods severity allows' do
+      expect(logger.trace?).to be_truthy
+      expect(logger.debug?).to be_truthy
+      expect(logger.info?).to be_truthy
+      expect(logger.warn?).to be_truthy
+      expect(logger.error?).to be_truthy
+      expect(logger.fatal?).to be_truthy
+    end
+  end
+
   describe '#debug' do
     let(:log_level) { 20 }
     let(:log_msg) { 'debug message' }
     let(:method) { 'debug' }
 
     it_behaves_like 'log'
+
+    it 'is consistent with the methods severity allows' do
+      expect(logger.trace?).to be_falsey
+      expect(logger.debug?).to be_truthy
+    end
   end
 
   describe '#info' do
@@ -538,7 +562,7 @@ describe Ougai::Logger do
 
     context 'another logger level is the same as original one' do
       before do
-        logger.level = Logger::INFO # propagate serverity to another one
+        logger.level = Logger::INFO # propagate severity to another one
       end
 
       it 'does not output debug log on both loggers' do

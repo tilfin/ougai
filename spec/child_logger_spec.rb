@@ -32,9 +32,38 @@ describe Ougai::ChildLogger do
   describe '#level propagated from parent one' do
     let(:logger) { parent_logger.child }
 
+    context 'TRACE' do
+      let(:log_msg) { 'log message' }
+      before { parent_logger.level = Ougai::Logger::TRACE }
+
+      it 'outputs trace message' do
+        logger.trace(log_msg)
+        expect(item).to be_log_message(log_msg, 10)
+      end
+
+      it 'outputs debug message' do
+        logger.debug(log_msg)
+        expect(item).to be_log_message(log_msg, 20)
+      end
+
+      it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_truthy
+        expect(logger.debug?).to be_truthy
+        expect(logger.info?).to be_truthy
+        expect(logger.warn?).to be_truthy
+        expect(logger.error?).to be_truthy
+        expect(logger.fatal?).to be_truthy
+      end
+    end
+
     context 'DEBUG' do
       let(:log_msg) { 'log message' }
       before { parent_logger.level = Logger::DEBUG }
+
+      it 'does not output trace message' do
+        logger.trace(log_msg)
+        expect(item).to be_nil
+      end
 
       it 'outputs debug message' do
         logger.debug(log_msg)
@@ -47,6 +76,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_truthy
         expect(logger.info?).to be_truthy
         expect(logger.warn?).to be_truthy
@@ -75,6 +105,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_falsey
         expect(logger.info?).to be_truthy
         expect(logger.warn?).to be_truthy
@@ -103,6 +134,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_falsey
         expect(logger.info?).to be_falsey
         expect(logger.warn?).to be_truthy
@@ -131,6 +163,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_falsey
         expect(logger.info?).to be_falsey
         expect(logger.warn?).to be_falsey
@@ -159,6 +192,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_falsey
         expect(logger.info?).to be_falsey
         expect(logger.warn?).to be_falsey
@@ -182,6 +216,7 @@ describe Ougai::ChildLogger do
       end
 
       it 'is consistent with the methods severity allows' do
+        expect(logger.trace?).to be_falsey
         expect(logger.debug?).to be_falsey
         expect(logger.info?).to be_falsey
         expect(logger.warn?).to be_falsey

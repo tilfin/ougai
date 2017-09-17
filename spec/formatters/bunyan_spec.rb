@@ -114,4 +114,20 @@ describe Ougai::Formatters::Bunyan do
     end
   end
 
+  describe '#datetime_format' do
+    subject do
+      formatter.call('DEBUG', Time.now, nil, data)
+    end
+
+    context 'is time AM/PM format' do
+      before do
+        formatter.datetime_format = '%I:%M:%S %p'
+      end
+
+      it 'applys output' do
+        result = JSON.parse(subject, symbolize_names: true)
+        expect(result[:time]).to match(/^\d{2}:\d{2}:\d{2} [AP]M$/)
+      end
+    end
+  end
 end

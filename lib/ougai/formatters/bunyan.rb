@@ -49,7 +49,7 @@ module Ougai
 
       def dump(data)
         return data unless @jsonize
-        data[:time] = data[:time].iso8601(3)
+        data[:time] = format_datetime(data[:time])
         str = JSON.generate(data)
         str << "\n" if @with_newline
         str

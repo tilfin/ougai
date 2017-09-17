@@ -20,7 +20,7 @@ module Ougai
       def call(severity, time, progname, data)
         msg = data.delete(:msg)
         level = @plain ? severity : colored_level(severity)
-        strs = ["[#{time.iso8601(3)}] #{level}: #{msg}"]
+        strs = ["[#{format_datetime(time)}] #{level}: #{msg}"]
         if err_str = create_err_str(data)
           strs.push(err_str)
         end

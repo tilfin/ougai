@@ -3,6 +3,24 @@ require 'spec_helper'
 describe Ougai::Formatters::Base do
   subject { described_class.new(app_name, hostname) }
 
+  context 'default' do
+    let (:app_name) { nil }
+    let (:hostname) { nil }
+
+    it 'has datetime format default ISO8601' do
+      expect(subject.datetime_format).to match(/^\%FT\%T\.\%3N(Z|\%\:z)$/)
+    end
+
+    it 'has datetime_format accessor' do
+      subject.datetime_format = '%I:%M:%S %p'
+      expect(subject.datetime_format).to eq('%I:%M:%S %p')
+
+      # revert default format by to set nil
+      subject.datetime_format = nil
+      expect(subject.datetime_format).to match(/^\%FT\%T\.\%3N(Z|\%\:z)$/)
+    end
+  end
+
   context 'without arguments and hostname contains a UTF-8 char' do
     let (:app_name) { nil }
     let (:hostname) { nil }

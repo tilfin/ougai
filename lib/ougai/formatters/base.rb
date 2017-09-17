@@ -1,4 +1,3 @@
-require 'logger'
 require 'time'
 require 'socket'
 
@@ -13,6 +12,11 @@ module Ougai
         @hostname = hostname || Socket.gethostname.force_encoding('UTF-8')
         @trace_indent = 2
         @trace_max_lines = 100
+        self.datetime_format = nil
+      end
+
+      def datetime_format=(value)
+        @datetime_format = value || default_datetime_format
       end
 
       def serialize_exc(ex)
@@ -29,6 +33,19 @@ module Ougai
       def serialize_trace(trace)
         sp = "\n" + ' ' * @trace_indent
         trace.slice(0, @trace_max_lines).join(sp)
+      end
+
+      private
+
+      def format_datetime(time)
+        time.strftime(@datetime_format)
+      end
+
+      def default_datetime_format
+        t = Time.new
+        f = '%FT%T.%3N'
+        f << (t.utc? ? 'Z' : '%:z')
+        f.freeze
       end
     end
   end

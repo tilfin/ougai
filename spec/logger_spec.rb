@@ -627,7 +627,7 @@ describe Ougai::Logger do
 
     context 'another logger level is greater than original one' do
       before do
-        logger.level = Logger::INFO
+        logger.level = 'info'
         another_logger.level = Logger::WARN
       end
 

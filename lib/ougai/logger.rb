@@ -91,14 +91,14 @@ module Ougai
     def to_item(args)
       msg, ex, data = args
 
-      if ex.nil?
+      if msg.nil?
+        { msg: @default_message }
+      elsif ex.nil?
         create_item_with_1arg(msg)
       elsif data.nil?
         create_item_with_2args(msg, ex)
-      elsif msg
+      else
         create_item_with_3args(msg, ex, data)
-      else # No args
-        { msg: @default_message }
       end
     end
 

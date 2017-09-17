@@ -230,6 +230,13 @@ describe Ougai::Logger do
         expect(item).to include_data(something: { name: 'foo' })
       end
     end
+
+    context 'without arguments' do
+      it 'outputs only default message' do
+        logger.send(method)
+        expect(item).to be_log_message('No message', log_level)
+      end
+    end
   end
 
   describe '#trace' do

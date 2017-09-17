@@ -21,7 +21,7 @@ module Ougai
     # @param logger [Logger] The logger receiving broadcast logs.
     def self.broadcast(logger)
       Module.new do |mdl|
-        ::Logger::Severity.constants.each do |severity|
+        Logger::Severity.constants.each do |severity|
           method_name = severity.downcase.to_sym
 
           mdl.send(:define_method, method_name) do |*args|

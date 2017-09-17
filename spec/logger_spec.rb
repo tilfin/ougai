@@ -565,6 +565,12 @@ describe Ougai::Logger do
         logger.level = Logger::INFO # propagate severity to another one
       end
 
+      it 'does not output trace log on both loggers' do
+        logger.trace(log_msg, foo: 0)
+        expect(item).to be_nil
+        expect(another_item).to be_nil
+      end
+
       it 'does not output debug log on both loggers' do
         logger.debug(log_msg, foo: 1)
         expect(item).to be_nil
@@ -602,20 +608,20 @@ describe Ougai::Logger do
 
     context 'another logger level is lower than original one' do
       before do
-        logger.level = Logger::INFO
-        another_logger.level = Logger::DEBUG
+        logger.level = Logger::DEBUG
+        another_logger.level = :trace
       end
 
-      it 'outputs debug log on only another logger' do
-        logger.debug(log_msg)
+      it 'does not output trace log on both loggers' do
+        logger.trace(log_msg)
         expect(item).to be_nil
-        expect(another_item).to be_log_message(log_msg, 20)
+        expect(another_item).to be_log_message(log_msg, 10)
       end
 
-      it 'outputs info log on both loggers' do
-        logger.info(log_msg)
-        expect(item).to be_log_message(log_msg, 30)
-        expect(another_item).to be_log_message(log_msg, 30)
+      it 'outputs debug log on both loggers' do
+        logger.debug(log_msg)
+        expect(item).to be_log_message(log_msg, 20)
+        expect(another_item).to be_log_message(log_msg, 20)
       end
     end
 

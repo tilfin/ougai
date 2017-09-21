@@ -14,20 +14,26 @@ module Ougai
         @trace_indent = opts[:trace_indent] || 4
         @plain = opts[:plain] || false
         @excluded_fields = opts[:excluded_fields] || []
-        load_awesome_print
+        load_dependent
       end
 
       def call(severity, time, progname, data)
         msg = data.delete(:msg)
         level = @plain ? severity : colored_level(severity)
-        strs = ["[#{format_datetime(time)}] #{level}: #{msg}"]
-        if err_str = create_err_str(data)
-          strs.push(err_str)
-        end
+        dt = format_datetime(time)
+        err_str = create_err_str(data)
+
         @excluded_fields.each { |f| data.delete(f) }
-        unless data.empty?
-          strs.push(data.ai({ plain: @plain }))
-        end
+        data_str = create_data_str(data)
+        format_log_parts(dt, level, msg, err_str, data_str)
+      end
+
+      protected
+
+      def format_log_parts(datetime, level, msg, err, data)
+        strs = ["[#{datetime}] #{level}: #{msg}"]
+        strs.push(err) if err
+        strs.push(data) if data
         strs.join("\n") + "\n"
       end
 
@@ -59,9 +65,12 @@ module Ougai
         err_str
       end
 
-      private
+      def create_data_str(data)
+        return nil if data.empty?
+        data.ai({ plain: @plain })
+      end
 
-      def load_awesome_print
+      def load_dependent
         require 'awesome_print'
       rescue LoadError
         puts 'You must install the awesome_print gem to use this output.'

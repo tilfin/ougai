@@ -217,6 +217,7 @@ end
 {"name":"Mike","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created a user"}
 {"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created grand child logger"}
 {"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","age":34,"weight":72,"msg":"something detail"}
+{"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","mode":"processed","msg":"Great-grandchild logger that will be cleaned up on block exit."}
 ```
 
 If any field exists in both parent log and child log, the parent value is overridden or merged by child value.

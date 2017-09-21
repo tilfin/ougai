@@ -29,7 +29,13 @@ module Ougai
     end
 
     def child(fields = {})
-      ChildLogger.new(self, fields)
+      ch = ChildLogger.new(self, fields)
+
+      if !block_given?
+        ch
+      else
+        yield ch
+      end
     end
 
     def chain(_severity, _args, _fields, _hooks)

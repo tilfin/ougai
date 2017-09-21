@@ -197,7 +197,7 @@ But if the field's type is *Array*, both with_field value and logging value are 
 
 ### Create a child logger
 
-`logger.child(with_fields)` creates a child logger of self. Its argument `with_fields` add to all logs the child logger outputs. A child logger can also create its child logger.
+`logger.child(with_fields)` creates a child logger of self. Its argument `with_fields` add to all logs the child logger outputs. A child logger can also create its child logger. If you pass a block to this method, the child logger will be yielded to it.
 
 ```ruby
 logger = Ougai::Logger.new(STDOUT)
@@ -212,6 +212,12 @@ gc_logger = child_logger.child({ kind: 'detail' })
 child_logger.info('Created grand child logger')
 
 gc_logger.debug('something detail', age: 34, weight: 72)
+
+gc_logger.child({ mode: 'processed' }) do |gcc_logger|
+  gcc_logger.info('Great-grandchild logger that will be cleaned up on block exit.')
+
+  :some_return_value
+end
 ```
 
 ```json
@@ -219,6 +225,7 @@ gc_logger.debug('something detail', age: 34, weight: 72)
 {"name":"Mike","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created a user"}
 {"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created grand child logger"}
 {"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","age":34,"weight":72,"msg":"something detail"}
+{"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","mode":"processed","msg":"Great-grandchild logger that will be cleaned up on block exit."}
 ```
 
 If any field exists in both parent log and child log, the parent value is overridden or merged by child value.

@@ -80,7 +80,13 @@ module Ougai
     # @param fields [Hash] The fields appending to all logs
     # @return [ChildLogger] A created child logger
     def child(fields = {})
-      ChildLogger.new(self, fields)
+      ch = ChildLogger.new(self, fields)
+
+      if !block_given?
+        ch
+      else
+        yield ch
+      end
     end
 
     # @private

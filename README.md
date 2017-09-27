@@ -350,6 +350,7 @@ logger.formatter = Ougai::Formatters::Readable.new
 - [Forward logs to Fluentd](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Fluentd)
 - [Forward logs to Logentries](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Logentries)
 - [Use as ServerEngine logger](https://github.com/tilfin/ougai/wiki/Use-as-ServerEngine-logger)
+- [Forward logs to Loggly](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Loggly)
 
 ## License
 

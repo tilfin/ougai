@@ -46,14 +46,14 @@ module Ougai
     # @private
     def chain(severity, args, fields, hooks)
       hooks.push(@before_log) if @before_log
-      @parent.chain(severity, args, merge_fields(@with_fields, fields), hooks)
+      @parent.chain(severity, args, weak_merge!(fields, @with_fields), hooks)
     end
 
     protected
 
     def append(severity, args)
       hooks = @before_log ? [@before_log] : []
-      @parent.chain(severity, args, @with_fields, hooks)
+      @parent.chain(severity, args, @with_fields.dup, hooks)
     end
   end
 end

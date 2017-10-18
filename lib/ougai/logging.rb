@@ -102,12 +102,12 @@ module Ougai
     end
 
     # @private
-    def merge_fields(base_data, new_data)
-      base_data.merge(new_data) do |_, base_val, new_val|
-        if base_val.is_a?(Array) and new_val.is_a?(Array)
-          (base_val + new_val).uniq
+    def weak_merge!(base_data, inferior_data)
+      base_data.merge!(inferior_data) do |_, base_v, inferior_v|
+        if base_v.is_a?(Array) and inferior_v.is_a?(Array)
+          (inferior_v + base_v).uniq
         else
-          new_val
+          base_v
         end
       end
     end

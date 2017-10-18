@@ -59,7 +59,7 @@ module Ougai
     # @private
     def chain(severity, args, fields, hooks)
       hooks.push(@before_log) if @before_log
-      write(severity, args, merge_fields(@with_fields, fields), hooks)
+      write(severity, args, weak_merge!(fields, @with_fields), hooks)
     end
 
     protected
@@ -81,7 +81,7 @@ module Ougai
     end
 
     def write(severity, args, fields, hooks)
-      data = merge_fields(fields, to_item(args))
+      data = weak_merge!(to_item(args), fields)
       hooks.each do |hook|
         return false if hook.call(data) == false
       end

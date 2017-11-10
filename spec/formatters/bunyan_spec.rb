@@ -20,6 +20,15 @@ describe Ougai::Formatters::Bunyan do
 
   let(:formatter) { described_class.new }
 
+  context '#initialize' do
+    let(:appname) { 'dummy app name' }
+
+    it 'suceeds with arguments' do
+      fmt = described_class.new(appname)
+      expect(fmt.app_name).to eq(appname)
+    end
+  end
+
   context 'jsonize is true and with_newline is true' do
     subject { formatter.call('DEBUG', Time.now, nil, data) }
 

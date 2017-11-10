@@ -9,8 +9,8 @@ module Ougai
     class Bunyan < Base
       attr_accessor :jsonize, :with_newline
 
-      def initialize
-        super
+      def initialize(*args)
+        super(*args)
         @jsonize = true
         @with_newline = true
       end

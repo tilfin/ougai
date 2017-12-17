@@ -64,4 +64,35 @@ describe Ougai::Formatters::Base do
       expect(subject.hostname).to eq('myhost')
     end
   end
+
+  describe '#serialize_exc' do
+    let (:app_name) { 'myapp' }
+    let (:hostname) { 'myhost' }
+    let (:errmsg) { 'dummy error' }
+
+    it 'returning data with stack as String' do
+      begin
+        raise errmsg
+      rescue => e
+        result = subject.serialize_exc(e)
+      end        
+      expect(result[:message]).to eq(errmsg)
+      expect(result[:stack]).to be_instance_of(String)
+    end
+
+    context 'not serialize backtrace' do
+      it 'returning data with stack as Array' do
+        subject.serialize_backtrace = false
+        subject.trace_max_lines = 6
+        begin
+          raise errmsg
+        rescue => e
+          result = subject.serialize_exc(e)
+        end        
+        expect(result[:message]).to eq(errmsg)
+        expect(result[:stack]).to be_instance_of(Array)
+        expect(result[:stack].size).to eq(6)
+      end
+    end
+  end
 end

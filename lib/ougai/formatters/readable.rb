@@ -14,6 +14,7 @@ module Ougai
         @trace_indent = opts[:trace_indent] || 4
         @plain = opts[:plain] || false
         @excluded_fields = opts[:excluded_fields] || []
+        @serialize_backtrace = true
         load_dependent
       end
 
@@ -26,6 +27,10 @@ module Ougai
         @excluded_fields.each { |f| data.delete(f) }
         data_str = create_data_str(data)
         format_log_parts(dt, level, msg, err_str, data_str)
+      end
+
+      def serialize_backtrace=(value)
+        raise RuntimeError, 'Not support serialize_backtrace'
       end
 
       protected
@@ -61,7 +66,7 @@ module Ougai
         return nil unless data.key?(:err)
         err = data.delete(:err)
         err_str = "  #{err[:name]} (#{err[:message]}):"
-        err_str += "\n    " + err[:stack] if err.key?(:stack)
+        err_str += "\n" + (" " * @trace_indent) + err[:stack] if err.key?(:stack)
         err_str
       end
 

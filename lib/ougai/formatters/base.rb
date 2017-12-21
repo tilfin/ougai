@@ -4,6 +4,7 @@ require 'socket'
 module Ougai
   module Formatters
     # Base formatter
+    # Custom formatter must override `_call`.
     # @attr [Fixnum] trace_indent Specify exception backtrace indent (by default this is 2).
     # @attr [Fixnum] trace_max_lines Keep exception backtrace lines (by default this is 100).
     # @attr [Boolean] serialize_backtrace Whether exception should converts String (by default this is on).
@@ -19,6 +20,14 @@ module Ougai
         @trace_max_lines = 100
         @serialize_backtrace = true
         self.datetime_format = nil
+      end
+
+      def call(severity, time, progname, data)
+        _call(severity, time, progname, data.is_a?(Hash) ? data : { msg: data.to_s })
+      end
+
+      def _call(severity, time, progname, data)
+        raise NotImplementedError, "_call must be implemented"
       end
 
       def datetime_format=(value)

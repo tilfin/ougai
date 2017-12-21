@@ -15,7 +15,7 @@ module Ougai
         @with_newline = true
       end
 
-      def call(severity, time, progname, data)
+      def _call(severity, time, progname, data)
         dump({
           name: progname || @app_name,
           hostname: @hostname,

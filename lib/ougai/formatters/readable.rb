@@ -18,7 +18,7 @@ module Ougai
         load_dependent
       end
 
-      def call(severity, time, progname, data)
+      def _call(severity, time, progname, data)
         msg = data.delete(:msg)
         level = @plain ? severity : colored_level(severity)
         dt = format_datetime(time)

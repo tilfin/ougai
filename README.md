@@ -109,8 +109,8 @@ logger.debug('Debug!', custom_data: { id: 1, name: 'something' })
 ```
 
 ```json
-{"name":"main","hostname":"mint","pid":14607,"level":20,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Debugging","custom_data":{"id":1,"name":"something"}}
-{"name":"main","hostname":"mint","pid":14607,"level":20,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Debug!","data_id":1,"data_flag":true}
+{"name":"main","hostname":"mint","pid":14607,"level":20,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Debugging","data_id":1,"data_flag":true}
+{"name":"main","hostname":"mint","pid":14607,"level":20,"time":"2016-10-16T22:26:48.836+09:00","v":0,"msg":"Debug!","custom_data":{"id":1,"name":"something"}}
 ```
 
 ### log with a message and an exception

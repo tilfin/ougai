@@ -23,7 +23,7 @@ module Ougai
       end
 
       def call(severity, time, progname, data)
-        _call(severity, time, progname, data.is_a?(Hash) ? data : { msg: data.to_s })
+        _call(severity, time, progname, data.is_a?(::Hash) ? data : { msg: data.to_s })
       end
 
       def _call(severity, time, progname, data)

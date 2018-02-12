@@ -1,5 +1,5 @@
 require 'ougai/formatters/base'
-require 'json'
+require 'oj'
 
 module Ougai
   module Formatters
@@ -47,10 +47,13 @@ module Ougai
 
       private
 
+      OJ_OPTIONS = { mode: :custom, time_format: :xmlschema,
+                     use_as_json: true, use_to_hash: true, use_to_json: true }
+
       def dump(data)
         return data unless @jsonize
         data[:time] = format_datetime(data[:time])
-        str = JSON.generate(data)
+        str = Oj.dump(data, OJ_OPTIONS)
         str << "\n" if @with_newline
         str
       end

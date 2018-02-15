@@ -2,12 +2,13 @@ Ougai
 =====
 
 [![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
+[![document](https://img.shields.io/badge/document-1.6.2-purple.svg)](http://www.rubydoc.info/gems/ougai/1.6.2/)
 [![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
 A structured logging system is capable of handling a message, structured data or an exception easily.
-It has JSON formatter compatible with [Bunyan](https://github.com/trentm/node-bunyan) for Node.js and
+It has JSON formatters compatible with [Bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) for Node.js and
 human readable formatter with [Awesome Print](https://github.com/awesome-print/awesome_print) for console.
 
 ## Installation
@@ -293,18 +294,18 @@ logger.warn('Ignored something.')
 ```
 
 
-## View logs with node-bunyan
+## View pretty logs with node-bunyan or pino
 
-Install [bunyan](https://github.com/trentm/node-bunyan) via npm
+Install [bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) via npm
 
 ```
 $ npm install -g bunyan
 ```
 
-Pass a log file to command `bunyan`
+Pipe a log file to command
 
 ```
-$ bunyan output.log
+$ cat output.log | bunyan
 [2016-10-16T22:26:48.835+09:00]  INFO: main/14607 on mint: Info message!
 [2016-10-16T22:26:48.836+09:00] DEBUG: main/14607 on mint: Debugging (data_id=1, data_flag=true)
 [2016-10-16T22:26:48.836+09:00] DEBUG: main/14607 on mint: Debug!
@@ -319,6 +320,7 @@ $ bunyan output.log
       main.rb:18:in `<main>'
 ```
 
+If you use *Ougai::Formatters::Pino*, you can use command [pino](https://github.com/pinojs/pino) as well as [bunyan](https://github.com/trentm/node-bunyan).
 
 ## Use human Readable formatter for console
 

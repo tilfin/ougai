@@ -4,15 +4,25 @@ require 'oj'
 module Ougai
   module Formatters
     # A JSON formatter compatible with node-bunyan
-    # @attr [Boolean] jsonize Whether log should converts JSON (by default this is on).
-    # @attr [Boolean] with_newline Whether tailing NL should be appended (by default this is on).
+    # @attr [Boolean] jsonize Whether log should converts JSON
+    # @attr [Boolean] with_newline Whether tailing NL should be appended
     class Bunyan < Base
       attr_accessor :jsonize, :with_newline
 
-      def initialize(*args)
-        super(*args)
-        @jsonize = true
-        @with_newline = true
+      # Intialize a formatter
+      # @param [String] app_name application name (execution program name if nil)
+      # @param [String] hostname hostname (hostname if nil)
+      # @param [Hash] opts the initial values of attributes
+      # @option opts [String] :trace_indent (2) the value of trace_indent attribute
+      # @option opts [String] :trace_max_lines (100) the value of trace_max_lines attribute
+      # @option opts [String] :serialize_backtrace (true) the value of serialize_backtrace attribute
+      # @option opts [String] :jsonize (true) the value of jsonize attribute
+      # @option opts [String] :with_newline (true) the value of with_newline attribute
+      def initialize(app_name = nil, hostname = nil, opts = {})
+        aname, hname, opts = Base.parse_new_params([app_name, hostname, opts])
+        super(aname, hname, opts)
+        @jsonize = opts.fetch(:jsonize, true)
+        @with_newline = opts.fetch(:with_newline, true)
       end
 
       def _call(severity, time, progname, data)

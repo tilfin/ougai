@@ -3,16 +3,25 @@ require 'ougai/formatters/base'
 module Ougai
   module Formatters
     # A human readble formatter with awesome_print
-    # @attr [Boolean] plain Whether log should be plain not colorized (by default this is off).
-    # @attr [Fixnum] trace_indent The indent space size (by default this is 4).
-    # @attr [Array<String, Symbol>] excluded_fields The fields excluded from all logs.
+    # @attr [Boolean] plain Whether log should be plain not colorized.
+    # @attr [Array<String, Symbol>] excluded_fields The fields excluded from all logs
     class Readable < Base
-      attr_accessor :plain, :trace_indent, :excluded_fields
+      attr_accessor :plain, :excluded_fields
 
-      def initialize(opts = {})
-        super(opts[:app_name], opts[:hostname])
-        @trace_indent = opts[:trace_indent] || 4
-        @plain = opts[:plain] || false
+      # Intialize a formatter
+      # @param [String] app_name application name (execution program name if nil)
+      # @param [String] hostname hostname (hostname if nil)
+      # @param [Hash] opts the initial values of attributes
+      # @option opts [String] :trace_indent (4) the value of trace_indent attribute
+      # @option opts [String] :trace_max_lines (100) the value of trace_max_lines attribute
+      # @option opts [String] :serialize_backtrace (true) the value of serialize_backtrace attribute
+      # @option opts [String] :plain (false) the value of plain attribute
+      # @option opts [String] :excluded_fields ([]) the value of excluded_fields attribute
+      def initialize(app_name = nil, hostname = nil, opts = {})
+        aname, hname, opts = Base.parse_new_params([app_name, hostname, opts])
+        super(aname, hname, opts)
+        @trace_indent = opts.fetch(:trace_indent, 4)
+        @plain = opts.fetch(:plain, false)
         @excluded_fields = opts[:excluded_fields] || []
         @serialize_backtrace = true
         load_dependent

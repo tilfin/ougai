@@ -13,12 +13,19 @@ module Ougai
       attr_accessor :serialize_backtrace
       attr_reader :app_name, :hostname
 
-      def initialize(app_name = nil, hostname = nil)
+      # Intialize a formatter
+      # @param [String] app_name application name
+      # @param [String] hostname hostname
+      # @param [Hash] opts the initial values of attributes
+      # @option opts [String] :trace_indent (2) the value of trace_indent attribute
+      # @option opts [String] :trace_max_lines (100) the value of trace_max_lines attribute
+      # @option opts [String] :serialize_backtrace (true) the value of serialize_backtrace attribute
+      def initialize(app_name = nil, hostname = nil, opts = {})
         @app_name = app_name || File.basename($0, ".rb")
         @hostname = hostname || Socket.gethostname.force_encoding('UTF-8')
-        @trace_indent = 2
-        @trace_max_lines = 100
-        @serialize_backtrace = true
+        @trace_indent = opts.fetch(:trace_indent, 2)
+        @trace_max_lines = opts.fetch(:trace_max_lines, 100)
+        @serialize_backtrace = opts.fetch(:serialize_backtrace, true)
         self.datetime_format = nil
       end
 
@@ -62,6 +69,16 @@ module Ougai
         f = '%FT%T.%3N'
         f << (t.utc? ? 'Z' : '%:z')
         f.freeze
+      end
+
+      def self.parse_new_params(args)
+        idx = args.index {|i| i.is_a?(Hash) }
+        return args if idx == 2
+        opts = args[idx]
+        app_name = opts.delete(:app_name)
+        hostname = opts.delete(:hostname)
+        app_name ||= args[0] if idx > 0
+        [app_name, hostname, opts]
       end
     end
   end

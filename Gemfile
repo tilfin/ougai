@@ -6,4 +6,5 @@ gemspec
 group :test do
   gem 'awesome_print'
   gem 'simplecov', require: false
+  gem 'yard'
 end

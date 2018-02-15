@@ -2,7 +2,7 @@ Ougai
 =====
 
 [![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
-[![document](https://img.shields.io/badge/document-1.6.2-purple.svg)](http://www.rubydoc.info/gems/ougai/1.6.2/)
+[![document](https://img.shields.io/badge/document-1.6.3-green.svg)](http://www.rubydoc.info/gems/ougai/1.6.3/)
 [![Build Status](https://travis-ci.org/tilfin/ougai.svg?branch=master)](https://travis-ci.org/tilfin/ougai)
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)

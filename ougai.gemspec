@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/tilfin/ougai"
   spec.license       = "MIT"
 
-  spec.files         = Dir['[A-Z]*[^~]'] + Dir['lib/**/*.rb'] + ['LICENSE.txt']
+  spec.files         = Dir['[A-Z]*[^~]'] + Dir['lib/**/*.rb'] + ['README.md', 'LICENSE.txt']
   spec.test_files    = Dir['spec/**/*']
   spec.require_paths = ['lib']
 

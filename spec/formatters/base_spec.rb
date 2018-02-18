@@ -4,8 +4,8 @@ describe Ougai::Formatters::Base do
   subject { described_class.new(app_name, hostname) }
 
   context 'default' do
-    let (:app_name) { nil }
-    let (:hostname) { nil }
+    let!(:app_name) { nil }
+    let!(:hostname) { nil }
 
     it 'has datetime format default ISO8601' do
       expect(subject.datetime_format).to match(/^\%FT\%T\.\%3N(Z|\%\:z)$/)
@@ -22,8 +22,8 @@ describe Ougai::Formatters::Base do
   end
 
   context 'without arguments and hostname contains a UTF-8 char' do
-    let (:app_name) { nil }
-    let (:hostname) { nil }
+    let!(:app_name) { nil }
+    let!(:hostname) { nil }
 
     it 'has default app_name and default hostname' do
       myhostname = "Taro\xE2\x80\x99s-MacBook".force_encoding('ASCII-8BIT')
@@ -34,8 +34,8 @@ describe Ougai::Formatters::Base do
   end
 
   context 'with app_name' do
-    let (:app_name) { 'myapp' }
-    let (:hostname) { nil }
+    let!(:app_name) { 'myapp' }
+    let!(:hostname) { nil }
 
     it 'has specified app_name and default hostname' do
       myhostname = "Hanako's PC".encode('ASCII-8BIT')
@@ -46,8 +46,8 @@ describe Ougai::Formatters::Base do
   end
 
   context 'with hostname' do
-    let (:app_name) { nil }
-    let (:hostname) { 'myhost' }
+    let!(:app_name) { nil }
+    let!(:hostname) { 'myhost' }
 
     it 'has default app_name and specified hostname' do
       expect(subject.app_name).to eq('rspec')
@@ -56,8 +56,8 @@ describe Ougai::Formatters::Base do
   end
 
   context 'with app_name and hostname' do
-    let (:app_name) { 'myapp' }
-    let (:hostname) { 'myhost' }
+    let!(:app_name) { 'myapp' }
+    let!(:hostname) { 'myhost' }
 
     it 'has specified app_name and specified hostname' do
       expect(subject.app_name).to eq('myapp')
@@ -66,9 +66,9 @@ describe Ougai::Formatters::Base do
   end
 
   describe '#serialize_exc' do
-    let (:app_name) { 'myapp' }
-    let (:hostname) { 'myhost' }
-    let (:errmsg) { 'dummy error' }
+    let!(:app_name) { 'myapp' }
+    let!(:hostname) { 'myhost' }
+    let!(:errmsg) { 'dummy error' }
 
     it 'returning data with stack as String' do
       begin

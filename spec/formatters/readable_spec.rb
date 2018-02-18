@@ -22,6 +22,19 @@ describe Ougai::Formatters::Readable do
 
   let(:formatter) { described_class.new }
 
+  include_examples 'formatter#initialize',
+    default_opts: {
+      trace_indent: 4,
+      trace_max_lines: 100,
+      serialize_backtrace: true,
+      plain: false,
+      excluded_fields: []
+    },
+    options: {
+      plain: true,
+      excluded_fields: [:card_number]
+    }
+
   context 'when severity is TRACE' do
     subject { formatter.call('TRACE', Time.now, nil, data) }
 
@@ -118,6 +131,12 @@ describe Ougai::Formatters::Readable do
       it 'applys output' do
         expect(subject).to match(/^\[\d{2}:\d{2}:\d{2} [AP]M\]/)
       end
+    end
+  end
+
+  describe '#serialize_backtrace' do
+    it 'is not supported' do
+      expect{ formatter.serialize_backtrace = false }.to raise_error(NotImplementedError)
     end
   end
 end

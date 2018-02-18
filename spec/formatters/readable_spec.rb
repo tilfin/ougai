@@ -133,4 +133,10 @@ describe Ougai::Formatters::Readable do
       end
     end
   end
+
+  describe '#serialize_backtrace' do
+    it 'is not supported' do
+      expect{ formatter.serialize_backtrace = false }.to raise_error(NotImplementedError)
+    end
+  end
 end

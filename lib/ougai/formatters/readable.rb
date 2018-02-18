@@ -14,7 +14,6 @@ module Ougai
       # @param [Hash] opts the initial values of attributes
       # @option opts [String] :trace_indent (4) the value of trace_indent attribute
       # @option opts [String] :trace_max_lines (100) the value of trace_max_lines attribute
-      # @option opts [String] :serialize_backtrace (true) the value of serialize_backtrace attribute
       # @option opts [String] :plain (false) the value of plain attribute
       # @option opts [String] :excluded_fields ([]) the value of excluded_fields attribute
       def initialize(app_name = nil, hostname = nil, opts = {})
@@ -39,7 +38,7 @@ module Ougai
       end
 
       def serialize_backtrace=(value)
-        raise RuntimeError, 'Not support serialize_backtrace'
+        raise NotImplementedError, 'Not support serialize_backtrace'
       end
 
       protected

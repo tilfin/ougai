@@ -39,4 +39,16 @@ describe Ougai::Logging do
       end
     end
   end
+
+  describe '#chain' do
+    it 'is not implemented' do
+      expect{ subject.chain(:arg1, :arg2, :arg3, :arg4) }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe '#append' do
+    it 'is not implemented' do
+      expect{ subject.send(:append, :arg1, :arg2) }.to raise_error(NotImplementedError)
+    end
+  end
 end

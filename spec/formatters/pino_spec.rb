@@ -49,7 +49,7 @@ describe Ougai::Formatters::Pino do
       it 'includes valid strings' do
         expect(subject).to end_with("\n")
         result = JSON.parse(subject.chomp, symbolize_names: true)
-        expect(result).to include(data.merge(level: 20, time: time_epoc_msec, v: 1))
+        expect(result).to include(data.merge(pid: $$, level: 20, time: time_epoc_msec, v: 1))
       end
     end
 
@@ -64,7 +64,7 @@ describe Ougai::Formatters::Pino do
         let!(:severity) { 'TRACE' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(level: 10, time: time, v: 1))
+          expect(subject).to include(data.merge(pid: $$, level: 10, time: time, v: 1))
         end
       end
 
@@ -72,7 +72,7 @@ describe Ougai::Formatters::Pino do
         let!(:severity) { 'DEBUG' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(level: 20, time: time, v: 1))
+          expect(subject).to include(data.merge(pid: $$, level: 20, time: time, v: 1))
         end
       end
 
@@ -80,7 +80,7 @@ describe Ougai::Formatters::Pino do
         let!(:severity) { 'INFO' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(level: 30, time: time, v: 1))
+          expect(subject).to include(data.merge(pid: $$, level: 30, time: time, v: 1))
         end
       end
 
@@ -88,7 +88,7 @@ describe Ougai::Formatters::Pino do
         let!(:severity) { 'WARN' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(level: 40, time: time, v: 1))
+          expect(subject).to include(data.merge(pid: $$, level: 40, time: time, v: 1))
         end
       end
 
@@ -102,7 +102,7 @@ describe Ougai::Formatters::Pino do
 
         it 'includes valid hash' do
           expect(subject).to include({
-            level: 50, time: time, v: 1,
+            pid: $$, level: 50, time: time, v: 1,
             type: 'Error',
             msg: 'it is dummy.',
             stack: "DummyError: it is dummy.\n    #{stack}"
@@ -124,7 +124,7 @@ describe Ougai::Formatters::Pino do
 
         it 'includes valid hash' do
           expect(subject).to include({
-            level: 60, time: time, v: 1,
+            pid: $$, level: 60, time: time, v: 1,
             type: 'Error',
             msg: 'TheEnd',
             stack: "DummyError: it is dummy.\n  #{stack}",
@@ -140,7 +140,7 @@ describe Ougai::Formatters::Pino do
         end
 
         it 'includes valid hash' do
-          expect(subject).to include(level: 70, time: time, msg: 'unknown msg')
+          expect(subject).to include(pid: $$, level: 70, time: time, msg: 'unknown msg')
         end
       end
     end

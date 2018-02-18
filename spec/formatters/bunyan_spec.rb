@@ -10,11 +10,13 @@ describe Ougai::Formatters::Bunyan do
     }
   end
 
+  let(:stack) { "error1.rb\n  error2.rb" }
+
   let(:err) do
     {
       name: 'DummyError',
       message: 'it is dummy.',
-      stack: "error1.rb\n  error2.rb"
+      stack: stack
     }
   end
 
@@ -33,111 +35,120 @@ describe Ougai::Formatters::Bunyan do
       with_newline: false
     }
 
-  context 'jsonize is true and with_newline is true' do
-    subject { formatter.call('DEBUG', Time.now, nil, data) }
+  describe '#call' do
+    subject { formatter.call(severity, Time.now, nil, data) }
 
-    it 'includes valid strings' do
-      expect(subject).to end_with("\n")
-      result = JSON.parse(subject.chomp, symbolize_names: true)
-      expect(result).to include(data.merge(level: 20))
-      expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
-    end
-  end
+    context 'jsonize is true and with_newline is true' do
+      let!(:severity) { 'DEBUG' }
 
-  context 'jsonize is false' do
-    before do
-      formatter.jsonize = false
-    end
-
-    context 'when severity is TRACE' do
-      subject { formatter.call('TRACE', Time.now, nil, data) }
-
-      it 'includes valid hash' do
-        expect(subject).to include(data.merge(level: 10))
-        expect(subject[:time]).to be_an_instance_of(Time)
+      it 'includes valid strings' do
+        expect(subject).to end_with("\n")
+        result = JSON.parse(subject.chomp, symbolize_names: true)
+        expect(result).to include(data.merge(pid: $$, level: 20, v: 0))
+        expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
       end
     end
 
-    context 'when severity is DEBUG' do
-      subject { formatter.call('DEBUG', Time.now, nil, data) }
+    context 'jsonize is false' do
+      before do
+        formatter.jsonize = false
+      end
 
-      it 'includes valid hash' do
-        expect(subject).to include(data.merge(level: 20))
-        expect(subject[:time]).to be_an_instance_of(Time)
+      context 'when severity is TRACE' do
+        let!(:severity) { 'TRACE' }
+
+        it 'includes valid hash' do
+          expect(subject).to include(data.merge(pid: $$, level: 10, v: 0))
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is DEBUG' do
+        let!(:severity) { 'DEBUG' }
+
+        it 'includes valid hash' do
+          expect(subject).to include(data.merge(pid: $$, level: 20, v: 0))
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is INFO' do
+        let!(:severity) { 'INFO' }
+
+        it 'includes valid hash' do
+          expect(subject).to include(data.merge(pid: $$, level: 30, v: 0))
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is WARN' do
+        let!(:severity) { 'WARN' }
+
+        it 'includes valid hash' do
+          expect(subject).to include(data.merge(pid: $$, level: 40, v: 0))
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is ERROR' do
+        let!(:severity) { 'ERROR' }
+
+        before { data.merge!({ err: err }) }
+
+        it 'includes valid hash' do
+          expect(subject).to include(pid: $$, level: 50, v: 0, err: err)
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is FATAL' do
+        let!(:severity) { 'FATAL' }
+        let!(:data) do
+          { msg: 'TheEnd', err: err }
+        end
+
+        it 'includes valid hash' do
+          expect(subject).to include(pid: $$, level: 60, v: 0, err: err)
+          expect(subject[:time]).to be_an_instance_of(Time)
+        end
+      end
+
+      context 'when severity is UNKNOWN' do
+        let!(:severity) { 'ANY' }
+        let!(:data) do
+          { msg: 'unknown msg' }
+        end
+
+        it 'includes valid hash' do
+          expect(subject).to include(pid: $$, level: 70, msg: 'unknown msg', v: 0)
+        end
       end
     end
 
-    context 'when severity is INFO' do
-      subject { formatter.call('INFO', Time.now, nil, data) }
+    context 'with_newline is false' do
+      let!(:severity) { 'INFO' }
 
-      it 'includes valid hash' do
-        expect(subject).to include(data.merge(level: 30))
-        expect(subject[:time]).to be_an_instance_of(Time)
+      before do
+        formatter.with_newline = false
       end
-    end
 
-    context 'when severity is WARN' do
-      subject { formatter.call('WARN', Time.now, nil, data) }
-
-      it 'includes valid hash' do
-        expect(subject).to include(data.merge(level: 40))
-        expect(subject[:time]).to be_an_instance_of(Time)
+      it 'includes valid strings' do
+        expect(subject).not_to end_with("\n")
+        result = JSON.parse(subject, symbolize_names: true)
+        expect(result).to include(data.merge(pid: $$, level: 30, v: 0))
+        expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
       end
-    end
-
-    context 'when severity is ERROR' do
-      subject { formatter.call('ERROR', Time.now, nil, data.merge({ err: err })) }
-
-      it 'includes valid hash' do
-        expect(subject).to include(level: 50, err: err)
-        expect(subject[:time]).to be_an_instance_of(Time)
-      end
-    end
-
-    context 'when severity is FATAL' do
-      subject { formatter.call('FATAL', Time.now, nil, { msg: 'TheEnd', err: err }) }
-
-      it 'includes valid hash' do
-        expect(subject).to include(level: 60, err: err)
-        expect(subject[:time]).to be_an_instance_of(Time)
-      end
-    end
-
-    context 'when severity is UNKNOWN' do
-      subject { formatter.call('ANY', Time.now, nil, { msg: 'unknown msg' }) }
-
-      it 'includes valid hash' do
-        expect(subject).to include(level: 70, msg: 'unknown msg')
-      end
-    end
-  end
-
-  context 'with_newline is false' do
-    before do
-      formatter.with_newline = false
-    end
-
-    subject { formatter.call('INFO', Time.now, nil, data) }
-
-    it 'includes valid strings' do
-      expect(subject).not_to end_with("\n")
-      result = JSON.parse(subject, symbolize_names: true)
-      expect(result).to include(data.merge(level: 30))
-      expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
     end
   end
 
   describe '#datetime_format' do
-    subject do
-      formatter.call('DEBUG', Time.now, nil, data)
-    end
-
     context 'is time AM/PM format' do
       before do
         formatter.datetime_format = '%I:%M:%S %p'
       end
 
       it 'applys output' do
+        subject = formatter.call('DEBUG', Time.now, nil, data)
         result = JSON.parse(subject, symbolize_names: true)
         expect(result[:time]).to match(/^\d{2}:\d{2}:\d{2} [AP]M$/)
       end

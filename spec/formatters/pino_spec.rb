@@ -20,14 +20,7 @@ describe Ougai::Formatters::Pino do
 
   let(:formatter) { described_class.new }
 
-  describe '#initialize' do
-    let(:appname) { 'dummy app name' }
-
-    it 'suceeds with arguments' do
-      fmt = described_class.new(appname)
-      expect(fmt.app_name).to eq(appname)
-    end
-  end
+  include_examples 'JSON formatter#initialize'
 
   describe '#call' do
     let!(:time_epoc_msec) { 1518710101026 }

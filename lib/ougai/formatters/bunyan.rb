@@ -3,12 +3,8 @@ require 'ougai/formatters/base'
 module Ougai
   module Formatters
     # A JSON formatter compatible with node-bunyan
-    # @attr [Boolean] jsonize Whether log should converts JSON
-    # @attr [Boolean] with_newline Whether tailing NL should be appended
     class Bunyan < Base
       include ForJson
-
-      attr_accessor :jsonize, :with_newline
 
       # Intialize a formatter
       # @param [String] app_name application name (execution program name if nil)
@@ -22,8 +18,7 @@ module Ougai
       def initialize(app_name = nil, hostname = nil, opts = {})
         aname, hname, opts = Base.parse_new_params([app_name, hostname, opts])
         super(aname, hname, opts)
-        @jsonize = opts.fetch(:jsonize, true)
-        @with_newline = opts.fetch(:with_newline, true)
+        init_opts_for_json(opts)
       end
 
       def _call(severity, time, progname, data)

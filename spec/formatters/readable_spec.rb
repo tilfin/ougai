@@ -22,6 +22,19 @@ describe Ougai::Formatters::Readable do
 
   let(:formatter) { described_class.new }
 
+  include_examples 'formatter#initialize',
+    default_opts: {
+      trace_indent: 4,
+      trace_max_lines: 100,
+      serialize_backtrace: true,
+      plain: false,
+      excluded_fields: []
+    },
+    options: {
+      plain: true,
+      excluded_fields: [:card_number]
+    }
+
   context 'when severity is TRACE' do
     subject { formatter.call('TRACE', Time.now, nil, data) }
 

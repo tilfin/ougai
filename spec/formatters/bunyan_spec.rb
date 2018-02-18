@@ -20,7 +20,18 @@ describe Ougai::Formatters::Bunyan do
 
   let(:formatter) { described_class.new }
 
-  include_examples 'JSON formatter#initialize'
+  include_examples 'formatter#initialize',
+    default_opts: {
+      trace_indent: 2,
+      trace_max_lines: 100,
+      serialize_backtrace: true,
+      jsonize: true,
+      with_newline: true
+    },
+    options: {
+      jsonize: false,
+      with_newline: false
+    }
 
   context 'jsonize is true and with_newline is true' do
     subject { formatter.call('DEBUG', Time.now, nil, data) }

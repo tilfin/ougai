@@ -1,8 +1,19 @@
 require 'oj'
 
 module Ougai
-  # The features for JSON
+  # The features for JSON formatter
+  # @attr [Boolean] jsonize Whether log should converts JSON
+  # @attr [Boolean] with_newline Whether tailing NL should be appended
   module Formatters::ForJson
+    attr_accessor :jsonize, :with_newline
+
+    protected
+
+    def init_opts_for_json(opts)
+      @jsonize = opts.fetch(:jsonize, true)
+      @with_newline = opts.fetch(:with_newline, true)
+    end
+
     def to_level(severity)
       case severity
       when 'TRACE'

@@ -63,7 +63,7 @@ module Ougai
 
       def dump(data)
         return data unless @jsonize
-        data[:time] = data[:time].to_i * 1000
+        data[:time] = (data[:time].to_f * 1000).to_i
         str = Oj.dump(data, OJ_OPTIONS)
         str << "\n" if @with_newline
         str

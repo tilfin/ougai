@@ -30,13 +30,18 @@ describe Ougai::Formatters::Pino do
   end
 
   context 'jsonize is true and with_newline is true' do
+    let!(:time_epoc_msec) { 1518710101026 }
+
     subject { formatter.call('DEBUG', Time.now, nil, data) }
+
+    before { Timecop.freeze(Time.at(time_epoc_msec / 1000.0)) }
+    after { Timecop.return }
 
     it 'includes valid strings' do
       expect(subject).to end_with("\n")
       result = JSON.parse(subject.chomp, symbolize_names: true)
       expect(result).to include(data.merge(level: 20))
-      expect(result[:time]).to be > 1518710101026
+      expect(result[:time]).to eq(time_epoc_msec)
     end
   end
 

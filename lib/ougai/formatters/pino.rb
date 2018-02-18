@@ -1,5 +1,4 @@
 require 'ougai/formatters/base'
-require 'oj'
 
 module Ougai
   module Formatters
@@ -45,8 +44,6 @@ module Ougai
         }.merge(data))
       end
 
-      private
-
       def flat_err(data)
         return unless data.key?(:err)
         err = data.delete(:err)
@@ -58,15 +55,8 @@ module Ougai
         data[:stack] ||= stack
       end
 
-      OJ_OPTIONS = { mode: :custom, time_format: :xmlschema,
-                     use_as_json: true, use_to_hash: true, use_to_json: true }
-
-      def dump(data)
-        return data unless @jsonize
+      def convert_time(data)
         data[:time] = (data[:time].to_f * 1000).to_i
-        str = Oj.dump(data, OJ_OPTIONS)
-        str << "\n" if @with_newline
-        str
       end
     end
   end

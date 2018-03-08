@@ -102,46 +102,54 @@ module Ougai
       end
     end
 
-    def create_item_with_1arg(msg)
+    def create_item_with_1arg(arg)
       item = {}
-      if msg.is_a?(Exception)
-        item[:msg] = msg.to_s
-        set_exc(item, msg)
-      elsif msg.is_a?(Hash)
-        item[:msg] = @default_message unless msg.key?(:msg)
-        item.merge!(msg)
+      if arg.is_a?(Exception)
+        item[:msg] = arg.to_s
+        set_exc(item, arg)
+      elsif arg.is_a?(String)
+        item[:msg] = arg
       else
-        item[:msg] = msg.to_s
+        item.merge!(as_hash(arg))
+        item[:msg] ||= @default_message
       end
       item
     end
 
-    def create_item_with_2args(msg, ex)
+    def create_item_with_2args(arg1, arg2)
       item = {}
-      if ex.is_a?(Exception)
-        item[:msg] = msg.to_s
-        set_exc(item, ex)
-      elsif ex.is_a?(Hash)
-        item.merge!(ex)
-        if msg.is_a?(Exception)
-          set_exc(item, msg)
-        else
-          item[:msg] = msg.to_s
-        end
+      if arg2.is_a?(Exception) # msg, ex
+        item[:msg] = arg1.to_s
+        set_exc(item, arg2)
+      elsif arg1.is_a?(Exception) # ex, data
+        set_exc(item, arg1)
+        item.merge!(as_hash(arg2))
+        item[:msg] ||= arg1.to_s
+      else # msg, data
+        item[:msg] = arg1.to_s
+        item.merge!(as_hash(arg2))
       end
       item
     end
 
     def create_item_with_3args(msg, ex, data)
-      item = {}
-      set_exc(item, ex) if ex.is_a?(Exception)
-      item.merge!(data) if data.is_a?(Hash)
-      item[:msg] = msg.to_s
-      item
+      {}.tap do |item|
+        set_exc(item, ex) if ex.is_a?(Exception)
+        item.merge!(as_hash(data))
+        item[:msg] = msg.to_s
+      end
     end
 
     def set_exc(item, exc)
       item[@exc_key] = @formatter.serialize_exc(exc)
+    end
+
+    def as_hash(data)
+      if data.is_a?(Hash) || data.respond_to?(:to_hash)
+        data
+      else
+        { data: data }
+      end
     end
   end
 end

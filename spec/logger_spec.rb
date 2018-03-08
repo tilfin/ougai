@@ -128,6 +128,34 @@ describe Ougai::Logger do
       end
     end
 
+    context 'with data that can respond to_hash' do
+      it 'outputs valid' do
+        class Dummy
+          def to_hash
+            { foo: 1 }
+          end
+        end
+
+        logger.send(method, Dummy.new)
+        expect(item).to be_log_message('No message', log_level)
+        expect(item).to include_data(foo: 1)
+      end
+    end
+
+    context 'with data that cannot respond to_hash' do
+      it '(array) outputs valid' do
+        logger.send(method, ['bar', 2])
+        expect(item).to be_log_message('No message', log_level)
+        expect(item).to include_data(data: ['bar', 2])
+      end
+
+      it '(number) outputs valid' do
+        logger.send(method, 999)
+        expect(item).to be_log_message('No message', log_level)
+        expect(item).to include_data(data: 999)
+      end
+    end
+
     context 'with message and data' do
       it 'outputs valid' do
         logger.send(method, log_msg, data_id: 99, action: 'insert')

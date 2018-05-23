@@ -1,5 +1,3 @@
-require 'oj'
-
 module Ougai
   # The features for JSON formatter
   # @attr [Boolean] jsonize Whether log should converts JSON
@@ -12,6 +10,7 @@ module Ougai
     def init_opts_for_json(opts)
       @jsonize = opts.fetch(:jsonize, true)
       @with_newline = opts.fetch(:with_newline, true)
+      @serializer = Ougai::Serializer.for_json
     end
 
     def to_level(severity)
@@ -33,14 +32,11 @@ module Ougai
       end
     end
 
-    OJ_OPTIONS = { mode: :custom, time_format: :xmlschema,
-                   use_as_json: true, use_to_hash: true, use_to_json: true }
-
     # requires convert_time(data) method
     def dump(data)
       return data unless @jsonize
       convert_time(data)
-      str = Oj.dump(data, OJ_OPTIONS)
+      str = @serializer.serialize(data)
       str << "\n" if @with_newline
       str
     end

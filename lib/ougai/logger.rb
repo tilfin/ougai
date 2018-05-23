@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ougai
   # Main Logger
   # @attr [String] default_message Use this if log message is not specified (by default this is 'No message').

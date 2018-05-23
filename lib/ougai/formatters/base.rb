@@ -68,7 +68,7 @@ module Ougai
         t = Time.new
         f = '%FT%T.%3N'
         f << (t.utc? ? 'Z' : '%:z')
-        f.freeze
+        f
       end
 
       def self.parse_new_params(args)

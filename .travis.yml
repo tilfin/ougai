@@ -4,9 +4,7 @@ env:
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
 language: ruby
 rvm:
-  - 2.1.2
-  - 2.2.3
-  - 2.3.4
+  - 2.3.0
   - 2.4.1
   - 2.5.0
   - 2.6.0-preview1
@@ -17,7 +15,7 @@ before_script:
   - chmod +x ./cc-test-reporter
 script:
   - bundle exec rspec
-  - if [ "$TRAVIS_RUBY_VERSION" == "2.4.1" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ "$TRAVIS_RUBY_VERSION" == "2.5.0" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
   # In the case where travis is setup to build PR updates only, 
   # uncomment the line below
   # - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

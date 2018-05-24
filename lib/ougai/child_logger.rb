@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ougai
   # A logger created by the `child` method of parent logger
   class ChildLogger

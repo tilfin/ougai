@@ -29,7 +29,7 @@ describe Ougai::Logger do
       err = actual[:err]
       err[:message] == expected \
         && err[:name] = 'StandardError' \
-        && err[:stack].include?('ougai/spec')
+        && err[:stack].include?('<main>')
     end
   end
 

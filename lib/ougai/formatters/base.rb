@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'time'
 require 'socket'
 
@@ -65,10 +67,7 @@ module Ougai
       end
 
       def default_datetime_format
-        t = Time.new
-        f = '%FT%T.%3N'
-        f << (t.utc? ? 'Z' : '%:z')
-        f.freeze
+        "%FT%T.%3N#{(Time.new.utc? ? 'Z' : '%:z')}"
       end
 
       def self.parse_new_params(args)

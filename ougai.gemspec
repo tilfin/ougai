@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = Dir['spec/**/*']
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.1.2'
+  spec.required_ruby_version = '>= 2.3.0'
 
   if RUBY_PLATFORM =~ /java/
     spec.platform = 'java'

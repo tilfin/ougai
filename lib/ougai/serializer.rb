@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ougai
   class Serializer
     def self.for_json

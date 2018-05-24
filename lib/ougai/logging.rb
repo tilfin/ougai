@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ougai
   # Common Logging features
   module Logging
@@ -8,7 +10,7 @@ module Ougai
       include ::Logger::Severity
       TRACE = -1
 
-      SEV_LABEL = %w(TRACE DEBUG INFO WARN ERROR FATAL ANY).each(&:freeze).freeze
+      SEV_LABEL = %w(TRACE DEBUG INFO WARN ERROR FATAL ANY)
 
       def to_label(severity)
         SEV_LABEL[severity + 1] || 'ANY'

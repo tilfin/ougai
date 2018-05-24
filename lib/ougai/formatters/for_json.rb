@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ougai
   # The features for JSON formatter
   # @attr [Boolean] jsonize Whether log should converts JSON

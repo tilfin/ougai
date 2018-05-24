@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'jrjackson'
 
 module Ougai::Serializers

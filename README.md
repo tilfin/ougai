@@ -344,6 +344,148 @@ logger.formatter = Ougai::Formatters::Readable.new
 
 ![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true)
 
+### Further customization
+
+*Ougai::Formatters::Readable* offers two customizations: formatting and colorization
+
+**Formatting**.
+
+You can assign three custom *sub-formatters*:
+  - **`msg_formatter`** to format the main log line (usually datetime, log level 
+    and main message). This formatter must have a `call` method responding to
+    the signature `call(datetime, severity, msg, progname, data)`. 
+
+    Default  value is an instance of *Ougai::Formatters::Readable::MessageFormatter*
+  - **`data_formatter`** to format the structured logs. The `call` method must 
+    repond to the signature `call(data)`. 
+
+    Default value is an instance of *Ougai::Formatters::Readable::DataFormatter* 
+    and relies on Awesome-print.
+  - **`err_formatter`** to format errors. `call` method must respond to the signature
+    `call(data)` and this `call` method should remove `:err` from `data` to avoid
+    duplicate error printing. 
+
+    Default value is an instance of *Ougai::Formatters::Readable::ErrorFormatter*
+     
+Assignment is done when initializer formatter:
+
+```ruby
+my_formatter = Ougai::Formatters::Readable.new(
+  msg_formatter: MyFormatter.new,
+  data_formatter: proc do
+    # some formatting
+  end
+)
+```
+
+**Colorization**
+
+Colorization depends on a *Ougai::Colors::Configuration* instance. The previously
+defined *Ougai::Formatters::Readable::MessageFormatter* relies on three keys: 
+ - `:severity`: to color log severity. Has a default configuration.
+ - `:datetime`: to color log timestamp. By default, datetime is not colored.
+ - `:msg`     : to color log main message. By default, msg is not colored.
+
+You can add custom keys depending on your custom sub-formatters needs. For example, 
+you can add a `:progname` key if you are using it in your *msg_formatter*.
+
+Each key can have one of the following values:
+
+ - A single String: the same color is applied regardless the severity. Example:
+   ```ruby
+   {
+     datetime: "\e[34m" # Or Ougai::Colors::BLUE
+   }
+   ```
+   Datetime will always be in blue. A list of predefined colors are available at
+   *Ougai::Colors* but you can use custom string values as long as it is compatible
+   with your console. Ensure that such custom values are compatibles with `\e[0m`
+   reset tag.
+ - A Hash (keys are all the severities): the color depends on the log severity.
+   Example:
+   ```ruby
+   {
+     datetime: {
+       trace: "\e[34m", # Or Ougai::Colors::BLUE
+       debug: "\e[34m", # Or Ougai::Colors::BLUE
+       info: "\e[32m",  # Or Ougai::Colors::GREEN
+       warn: "\e[33m",  # Or Ougai::Colors::YELLOW
+       error: "\e[31m", # Or Ougai::Colors::RED
+       fatal: "\e[31m", # Or Ougai::Colors::RED
+       any: "\e[31m",   # Or Ougai::Colors::RED
+     }
+   }
+   ```
+   Datetime colors will depends on the log severity
+ - A symbol: the color configuration is the same as defined key. Example:
+   ```ruby
+   {
+     datetime: {
+       trace: "\e[34m", # Or Ougai::Colors::BLUE
+       debug: "\e[34m", # Or Ougai::Colors::BLUE
+       info: "\e[32m",  # Or Ougai::Colors::GREEN
+       warn: "\e[33m",  # Or Ougai::Colors::YELLOW
+       error: "\e[31m", # Or Ougai::Colors::RED
+       fatal: "\e[31m", # Or Ougai::Colors::RED
+       any: "\e[31m",   # Or Ougai::Colors::RED
+     },
+     msg: :datetime
+   }
+   ```
+   Datetime colors will depends on the log severity and log main message color is
+   the same as datetime colors.
+
+*warning*:
+ - In case of custom values, it is up to the developer that the custom values is
+   compatible with the console
+ - when defining values per severities, ensure that all severities are defined.
+   Otherwise, missing severities will be uncolored
+ - Beware of circular references such as:
+   ```ruby
+   {
+     datetime: :msg,
+     msg: :datetime
+   }
+   ```
+
+**Example**
+
+```ruby
+# severity values are inherited from a default configuration
+color_config = Ougai::Colors::Configuration.new(
+  # msg has the same color as severity
+  msg: :severity,
+  # datetime is severity-dependent but does not have the same color
+  datetime: {
+    trace:  Ougai::Colors::PURPLE,
+    debug:  Ougai::Colors::PURPLE,
+    info:   Ougai::Colors::PURPLE,
+    warn:   Ougai::Colors::YELLOW,
+    error:  Ougai::Colors::RED,
+    fatal:  Ougai::Colors::RED
+  }
+)
+my_formatter = Ougai::Formatters::Readable.new(
+  color_config: color_config,
+  # A custom class extending ::Ougai::Formatters::Readable::MessageFormatter
+  msg_formatter: Log::MsgFormatter.new(color_config),
+  # Simple data formatter provided by a Proc
+  data_formatter: proc do |data|
+    # Lograge request detected: avoid the long long long lograge hash
+    if data.key?(:request)
+      data[:request].reject { |k, _v| k == :not_required_key }
+                    .map { |key, val| "#{key}: #{val}" }
+                    .join(', ')
+    # Non lograge data are formatted by Awesome-Print
+    else
+      data.ai
+    end
+  end
+)
+logger = Ougai::Logger.new
+logger.formatter = my_formatter
+```
+
 
 ## How to use with famous products, services and libraries
 

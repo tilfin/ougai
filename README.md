@@ -353,7 +353,8 @@ logger.formatter = Ougai::Formatters::Readable.new
 You can assign three custom *sub-formatters*:
   - **`msg_formatter`** to format the main log line (usually datetime, log level 
     and main message). This formatter must have a `call` method responding to
-    the signature `call(datetime, severity, msg, progname, data)`. 
+    the signature `call(severity, datetime, progname, data)`. Main log message has
+    to be extracted from data: `msg = data.delete(:msg)` 
 
     Default  value is an instance of *Ougai::Formatters::Readable::MessageFormatter*
   - **`data_formatter`** to format the structured logs. The `call` method must 

@@ -54,13 +54,11 @@ module Ougai
       def _call(severity, time, progname, data)
         strs = []
         # Main message
-        msg = data.delete(:msg)
         dt = format_datetime(time)
-        strs << @msg_formatter.call(dt, severity, msg, progname, data)
+        strs << @msg_formatter.call(severity, dt, progname, data)
 
         # Error: displayed before additional data
         if data.key?(:err)
-          err = 
           err_str = @err_formatter.call(data)
           strs.push(err_str)
         end
@@ -98,12 +96,12 @@ module Ougai
           @plain = plain
         end
 
-        # @param [String] datetime: formatted uncolored datetime
         # @param [String] severity: unformatted uncolored severity
-        # @param [String] msg: main log message
+        # @param [String] datetime: formatted uncolored datetime
         # @param [String] _progname: optional program name
-        # @param [Hash] _data: additional data
-        def call(datetime, severity, msg, _progname, _data)
+        # @param [Hash] data: data containing :msg
+        def call(severity, datetime, _progname, data)
+          msg = data.delete(:msg)
           # optional colorization
           unless @plain
             severity = @color_config.color(:severity, severity, severity)

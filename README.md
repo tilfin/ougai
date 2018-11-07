@@ -485,7 +485,8 @@ my_formatter = Ougai::Formatters::Readable.new(
 logger = Ougai::Logger.new
 logger.formatter = my_formatter
 ```
-
+Such configuration, along with Lograge, makes the logs looking like:
+![Screenshot](https://github.com/Al-un/ougai/blob/images/ougai_readable_formatter_colorization_custom.png)
 
 ## How to use with famous products, services and libraries
 

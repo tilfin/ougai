@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'ougai/formatters/base'
+require 'ougai/colors/configuration'
 
 module Ougai
   module Formatters
@@ -18,72 +19,67 @@ module Ougai
       # @option opts [String] :trace_max_lines (100) the value of trace_max_lines attribute
       # @option opts [String] :plain (false) the value of plain attribute
       # @option opts [String] :excluded_fields ([]) the value of excluded_fields attribute
+      # @option opts [Hash] :colors set of color configuration to initialize a Ougai::Colors::Configuration
+      # @option opts [Ougai::Colors::Configuration] :color_config assign a color configuration. Takes
+      #                                             predecence over :colors
       def initialize(app_name = nil, hostname = nil, opts = {})
         aname, hname, opts = Base.parse_new_params([app_name, hostname, opts])
         super(aname, hname, opts)
         @trace_indent = opts.fetch(:trace_indent, 4)
-        @plain = opts.fetch(:plain, false)
         @excluded_fields = opts[:excluded_fields] || []
         @serialize_backtrace = true
+
+        # Colorization
+        @plain = opts.fetch(:plain, false)
+        if opts.key?(:color_config)
+          @color_config = opts[:color_config]
+        else
+          @color_config = Ougai::Colors::Configuration.new(opts[:colors] || {})
+        end
+
+        # Customizable log part formatter
+        @msg_formatter = opts.fetch(:msg_formatter) do
+          MessageFormatter.new(@color_config, @plain)
+        end
+        @data_formatter = opts.fetch(:data_formatter) do
+          DataFormatter.new(@plain)
+        end
+        @err_formatter = opts.fetch(:err_formatter) do
+          ErrorFormatter.new(@trace_indent)
+        end
+
         load_dependent
       end
 
       def _call(severity, time, progname, data)
+        strs = []
+        # Main message
         msg = data.delete(:msg)
-        level = @plain ? severity : colored_level(severity)
         dt = format_datetime(time)
-        err_str = create_err_str(data)
+        strs << @msg_formatter.call(dt, severity, msg, progname, data)
 
-        @excluded_fields.each { |f| data.delete(f) }
-        data_str = create_data_str(data)
-        format_log_parts(dt, level, msg, err_str, data_str)
+        # Error: displayed before additional data
+        if data.key?(:err)
+          err = 
+          err_str = @err_formatter.call(data)
+          strs.push(err_str)
+        end
+
+        # Additional data
+        @excluded_fields.each { |field| data.delete(field) }
+        unless data.empty?
+          data_str = @data_formatter.call(data)
+          strs.push(data_str)
+        end
+
+        strs.join("\n") + "\n"
       end
 
-      def serialize_backtrace=(value)
+      def serialize_backtrace=(_value)
         raise NotImplementedError, 'Not support serialize_backtrace'
       end
 
       protected
-
-      def format_log_parts(datetime, level, msg, err, data)
-        strs = ["[#{datetime}] #{level}: #{msg}"]
-        strs.push(err) if err
-        strs.push(data) if data
-        strs.join("\n") + "\n"
-      end
-
-      def colored_level(severity)
-        case severity
-        when 'TRACE'
-          color = '0;34'
-        when 'DEBUG'
-          color = '0;37'
-        when 'INFO'
-          color = '0;36'
-        when 'WARN'
-          color = '0;33'
-        when 'ERROR'
-          color = '0;31'
-        when 'FATAL'
-          color = '0;35'
-        else
-          color = '0;32'
-        end
-        "\e[#{color}m#{severity}\e[0m"
-      end
-
-      def create_err_str(data)
-        return nil unless data.key?(:err)
-        err = data.delete(:err)
-        err_str = "  #{err[:name]} (#{err[:message]}):"
-        err_str += "\n" + (" " * @trace_indent) + err[:stack] if err.key?(:stack)
-        err_str
-      end
-
-      def create_data_str(data)
-        return nil if data.empty?
-        data.ai({ plain: @plain })
-      end
 
       def load_dependent
         require 'awesome_print'
@@ -91,6 +87,61 @@ module Ougai
         puts 'You must install the awesome_print gem to use this output.'
         raise
       end
+
+      # Message line formatting class
+      class MessageFormatter
+        # @param [Ougai::Colors::Configuration] color_config: Inherit color
+        #        configuration from Formatter
+        # @param [Boolean] plain: Inherit plain attribute from Formatter
+        def initialize(color_config, plain = false)
+          @color_config = color_config
+          @plain = plain
+        end
+
+        # @param [String] datetime: formatted uncolored datetime
+        # @param [String] severity: unformatted uncolored severity
+        # @param [String] msg: main log message
+        # @param [String] _progname: optional program name
+        # @param [Hash] _data: additional data
+        def call(datetime, severity, msg, _progname, _data)
+          # optional colorization
+          unless @plain
+            severity = @color_config.color(:severity, severity, severity)
+          end
+
+          # Formatted output
+          "[#{datetime}] #{severity}: #{msg}"
+        end
+      end
+
+      # Data formatting class
+      class DataFormatter
+        # @param [Boolean] plain: Inherit plain attribute from Formatter
+        def initialize(plain = false)
+          @plain = plain
+        end
+
+        def call(data)
+          data.ai(plain: @plain)
+        end
+      end
+
+      # Error formatting class
+      class ErrorFormatter
+        # @param [Integer] trace_indent (4): Inherit trace_indent attribute from Formatter
+        def initialize(trace_indent = 4)
+          @trace_indent = trace_indent
+        end
+
+        # Formatting error
+        def call(data)
+          err = data.delete(:err)
+          err_str = "  #{err[:name]} (#{err[:message]}):"
+          err_str += "\n" + (' ' * @trace_indent) + err[:stack] if err.key?(:stack)
+          err_str
+        end
+      end
+
     end
   end
 end

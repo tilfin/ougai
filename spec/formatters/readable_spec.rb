@@ -2,6 +2,13 @@ require 'spec_helper'
 
 describe Ougai::Formatters::Readable do
   let!(:re_start_with_datetime) { /^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[\+\-\:0-9]{4,6})]/ }
+  let!(:trace_color)    { "\e[34m" }
+  let!(:debug_color)    { "\e[37m" }
+  let!(:info_color)     { "\e[36m" }
+  let!(:warn_color)     { "\e[33m" }
+  let!(:error_color)    { "\e[31m" }
+  let!(:fatal_color)    { "\e[35m" }
+  let!(:unknown_color)  { "\e[32m" }
 
   let(:data) do
     {
@@ -35,12 +42,26 @@ describe Ougai::Formatters::Readable do
       excluded_fields: [:card_number]
     }
 
+  describe '#initialize' do
+    context 'when no custom sub-formatter' do 
+      it 'has the default message formatter' do
+        expect(subject.instance_variable_get(:@msg_formatter)).to be_a(Ougai::Formatters::Readable::MessageFormatter)
+      end
+      it 'has the default data formatter' do
+        expect(subject.instance_variable_get(:@data_formatter)).to be_a(Ougai::Formatters::Readable::DataFormatter)
+      end
+      it 'has the default error formatter' do
+        expect(subject.instance_variable_get(:@err_formatter)).to be_a(Ougai::Formatters::Readable::ErrorFormatter)
+      end
+    end
+  end
+
   context 'when severity is TRACE' do
     subject { formatter.call('TRACE', Time.now, nil, data) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;34mTRACE\e[0m: Log Message!")
+      expect(subject).to include("#{trace_color}TRACE\e[0m: Log Message!")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':status => 200')
     end
   end
@@ -50,7 +71,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;37mDEBUG\e[0m: Log Message!")
+      expect(subject).to include("#{debug_color}DEBUG\e[0m: Log Message!")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':status => 200')
     end
   end
@@ -60,7 +81,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;36mINFO\e[0m: Log Message!")
+      expect(subject).to include("#{info_color}INFO\e[0m: Log Message!")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':method => "GET"')
     end
   end
@@ -70,7 +91,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;33mWARN\e[0m: Log Message!")
+      expect(subject).to include("#{warn_color}WARN\e[0m: Log Message!")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':path => "/"')
     end
   end
@@ -80,7 +101,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;31mERROR\e[0m: Log Message!")
+      expect(subject).to include("#{error_color}ERROR\e[0m: Log Message!")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include('DummyError (it is dummy.):')
     end
   end
@@ -90,7 +111,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;35mFATAL\e[0m: TheEnd")
+      expect(subject).to include("#{fatal_color}FATAL\e[0m: TheEnd")
       expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include("error1.rb\n  error2.rb")
     end
   end
@@ -100,7 +121,7 @@ describe Ougai::Formatters::Readable do
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
-      expect(subject).to include("\e[0;32mANY\e[0m: unknown msg")
+      expect(subject).to include("#{unknown_color}ANY\e[0m: unknown msg")
     end
   end
 
@@ -110,7 +131,7 @@ describe Ougai::Formatters::Readable do
     end
 
     it 'includes valid strings' do
-      expect(subject).to include("\e[0;37mDEBUG\e[0m: Log Message!")
+      expect(subject).to include("#{debug_color}DEBUG\e[0m: Log Message!")
       plain_subject = subject.gsub(/\e\[([;\d]+)?m/, '')
       expect(plain_subject).to include(':path => "/"')
       expect(plain_subject).not_to include(':status => 200')

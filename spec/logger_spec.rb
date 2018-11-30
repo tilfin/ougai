@@ -40,7 +40,7 @@ describe Ougai::Logger do
     log_str = io.string
     begin
       JSON.parse(log_str, symbolize_names: true)
-    rescue Exception => e
+    rescue Exception
       nil
     end 
   end
@@ -586,7 +586,7 @@ describe Ougai::Logger do
       log_str = another_io.string
       begin
         JSON.parse(log_str, symbolize_names: true)
-      rescue Exception => e
+      rescue Exception
         nil
       end 
     end

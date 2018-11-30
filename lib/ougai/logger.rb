@@ -13,6 +13,7 @@ module Ougai
 
     def initialize(*args)
       super(*args)
+      @before_log = nil
       @default_message = 'No message'
       @exc_key = :err
       @with_fields = {}

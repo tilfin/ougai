@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Ougai::Formatters::Readable do
-  let!(:re_start_with_datetime) { /^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[\+\-\:0-9]{4,6})]/ }
+  let!(:re_start_with_datetime) { /^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[\+\-\:0-9]{4,6})\]/ }
 
   let(:data) do
     {

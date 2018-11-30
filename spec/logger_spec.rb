@@ -40,9 +40,15 @@ describe Ougai::Logger do
     log_str = io.string
     begin
       JSON.parse(log_str, symbolize_names: true)
-    rescue Exception => e
+    rescue Exception
       nil
     end 
+  end
+
+  class Dummy
+    def to_hash
+      { foo: 1 }
+    end
   end
 
   shared_examples 'log' do
@@ -130,12 +136,6 @@ describe Ougai::Logger do
 
     context 'with data that can respond to_hash' do
       it 'outputs valid' do
-        class Dummy
-          def to_hash
-            { foo: 1 }
-          end
-        end
-
         logger.send(method, Dummy.new)
         expect(item).to be_log_message('No message', log_level)
         expect(item).to include_data(foo: 1)
@@ -586,7 +586,7 @@ describe Ougai::Logger do
       log_str = another_io.string
       begin
         JSON.parse(log_str, symbolize_names: true)
-      rescue Exception => e
+      rescue Exception
         nil
       end 
     end

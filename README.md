@@ -355,6 +355,9 @@ logger.formatter = Ougai::Formatters::Readable.new
 - [Forward logs to Loggly](https://github.com/tilfin/ougai/wiki/Forward-logs-to-Loggly)
 - [Use as Rack logger](https://github.com/tilfin/ougai/wiki/Use-as-Rack-logger)
 
+## Custom formatters and integrations
+- [Awesome Ougai](https://github.com/tilfin/ougai/wiki/Awesom-Ougai)
+
 ## License
 
 [MIT](LICENSE.txt)

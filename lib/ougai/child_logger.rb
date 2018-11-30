@@ -7,6 +7,7 @@ module Ougai
 
     # @private
     def initialize(parent, fields)
+      @before_log = nil
       @parent = parent
       @with_fields = fields
     end

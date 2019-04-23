@@ -169,9 +169,9 @@ logger.error do
   ['Failed to fetch info', ex, { id: 10 }]
 end
 
-loggger.fatal { ex }
+logger.fatal { ex }
 
-loggger.fatal do
+logger.fatal do
   ['Unexpected', ex]
 end
 ```

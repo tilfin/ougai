@@ -9,3 +9,5 @@ require 'ougai/formatters/pino'
 require 'ougai/serializer'
 require 'ougai/child_logger'
 require 'ougai/logger'
+require 'ougai/tagged_logging'
+

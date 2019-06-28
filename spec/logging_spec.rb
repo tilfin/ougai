@@ -19,27 +19,6 @@ describe Ougai::Logging do
     end
   end
 
-  describe '#child' do
-    let!(:fields) { double('fields') }
-    let!(:child_logger) { double('child logger') }
-
-    context 'block is not given' do
-      it 'returns child logger' do
-        expect(Ougai::ChildLogger).to receive(:new).with(subject, fields).and_return(child_logger)
-        expect(subject.child(fields)).to eq(child_logger)
-      end
-    end
-
-    context 'block is given' do
-      it 'passes child logger' do
-        expect(Ougai::ChildLogger).to receive(:new).with(subject, fields).and_return(child_logger)
-        subject.child(fields) do |cl|
-          expect(cl).to eq(child_logger)
-        end
-      end
-    end
-  end
-
   describe '#chain' do
     it 'is not implemented' do
       expect{ subject.chain(:arg1, :arg2, :arg3, :arg4) }.to raise_error(NotImplementedError)

@@ -436,4 +436,37 @@ describe Ougai::ChildLogger do
       end
     end
   end
+
+  describe '#child' do
+    let!(:root) { double('root logger') }
+
+    context 'when the class is original' do
+      subject!(:org_instance) { described_class.new(root, {}) }
+
+      it 'returns an instance of the same class' do
+        expect(org_instance.child).to be_an_instance_of(described_class)
+      end
+    end
+
+    context 'when the class is sub-class' do
+      subject!(:sc_instance) { Class.new(described_class).new(root, {}) }
+
+      it 'returns an instance of the child_class' do
+        expect(sc_instance.child).to be_an_instance_of(sc_instance.class)
+      end
+    end
+
+    context 'block is given' do
+      let!(:fields) { double('fields') }
+
+      subject { described_class.new(root, {}) }
+
+      it 'yields child logger' do
+        subject.child(fields) do |cl|
+          expect(cl.instance_variable_get(:@parent)).to eq(subject)
+          expect(cl.instance_variable_get(:@with_fields)).to eq(fields)
+        end
+      end
+    end
+  end
 end

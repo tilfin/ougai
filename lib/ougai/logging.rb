@@ -78,19 +78,6 @@ module Ougai
       level <= TRACE
     end
 
-    # Creates a child logger and returns it.
-    # @param fields [Hash] The fields appending to all logs
-    # @return [ChildLogger] A created child logger
-    def child(fields = {})
-      ch = ChildLogger.new(self, fields)
-
-      if !block_given?
-        ch
-      else
-        yield ch
-      end
-    end
-
     # @private
     def chain(_severity, _args, _fields, _hooks)
       raise NotImplementedError

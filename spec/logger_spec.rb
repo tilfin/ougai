@@ -685,4 +685,55 @@ describe Ougai::Logger do
       expect(another_io.closed?).to be_truthy
     end
   end
+
+  describe '.child_class' do
+    let!(:org_logger_cls) { described_class }
+    let!(:sc_logger_cls) { Class.new(described_class) }
+
+    context 'when Logger class is original' do
+      subject { described_class.child_class }
+
+      it { is_expected.to eq(Ougai::ChildLogger) }
+    end
+
+    context 'when Logger class is sub-class' do
+      subject { Class.new(described_class).child_class }
+
+      it 'returns sub-class of Ougai::ChildLogger' do
+        expect(subject).not_to eq(Ougai::ChildLogger)
+        expect(subject.superclass).to eq(Ougai::ChildLogger)
+      end
+    end
+  end
+
+  describe '#child' do
+    context 'when Logger class is original' do
+      subject!(:org_instance) { described_class.new(STDOUT) }
+
+      it 'returns ChildLogger instance' do
+        expect(org_instance.child).to be_an_instance_of(Ougai::ChildLogger)
+      end
+    end
+
+    context 'when Logger class is sub-class' do
+      subject!(:sc_instance) { Class.new(described_class).new(STDOUT) }
+
+      it 'returns an instance of the child_class' do
+        expect(sc_instance.child).to be_an_instance_of(sc_instance.class.child_class)
+      end
+    end
+
+    context 'block is given' do
+      let!(:fields) { double('fields') }
+
+      subject { described_class.new(STDOUT) }
+
+      it 'yields child logger' do
+        subject.child(fields) do |cl|
+          expect(cl.instance_variable_get(:@parent)).to eq(subject)
+          expect(cl.instance_variable_get(:@with_fields)).to eq(fields)
+        end
+      end
+    end
+  end
 end

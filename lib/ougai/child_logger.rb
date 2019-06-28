@@ -12,6 +12,19 @@ module Ougai
       @with_fields = fields
     end
 
+    # Creates a child logger and returns it.
+    # @param fields [Hash] The fields appending to all logs
+    # @return [ChildLogger] A created child logger
+    def child(fields = {})
+      ch = self.class.new(self, fields)
+
+      if !block_given?
+        ch
+      else
+        yield ch
+      end
+    end
+
     def level
       @parent.level
     end

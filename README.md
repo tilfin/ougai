@@ -264,14 +264,14 @@ Every calling for `logger` is propagated to `error_logger`.
 
 ```ruby
 logger = Ougai::Logger.new(STDOUT)
+logger.level = Logger::INFO
 
 error_logger = Ougai::Logger.new('./error.log')
+error_logger.level = Logger::ERROR
 logger.extend Ougai::Logger.broadcast(error_logger)
 
-logger.level = Logger::INFO
 logger.info('Hello!')
 
-error_logger.level = Logger::ERROR
 logger.error('Failed to do something.')
 
 logger.level = Logger::WARN # error_logger level is also set WARN by propagation

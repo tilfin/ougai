@@ -26,6 +26,9 @@ module Ougai
       end
     end
 
+    # Set logging severity threshold.
+    # Note that the log level below parent one does not work.
+    # @param severity [Integer|String|Symbol] The Severity of the log message.
     def level=(severity)
       if severity.is_a?(Integer)
         @level = severity

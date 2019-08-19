@@ -20,6 +20,20 @@ module Ougai
       @formatter = create_formatter
     end
 
+    class << self
+      def child_class
+        @child_class ||= ChildLogger
+      end
+
+      def child_class=(klass)
+        @child_class = klass
+      end
+
+      def inherited(subclass)
+        subclass.child_class = Class.new(ChildLogger)
+      end
+    end
+
     # Broadcasts the same logs to the another logger
     # @param logger [Logger] The logger receiving broadcast logs.
     def self.broadcast(logger)
@@ -57,6 +71,19 @@ module Ougai
       end
 
       super
+    end
+
+    # Creates a child logger and returns it.
+    # @param fields [Hash] The fields appending to all logs
+    # @return [ChildLogger] A created child logger
+    def child(fields = {})
+      ch = self.class.child_class.new(self, fields)
+
+      if !block_given?
+        ch
+      else
+        yield ch
+      end
     end
 
     # @private

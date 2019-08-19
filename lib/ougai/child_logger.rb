@@ -8,6 +8,7 @@ module Ougai
     # @private
     def initialize(parent, fields)
       @before_log = nil
+      @level = nil
       @parent = parent
       @with_fields = fields
     end
@@ -25,38 +26,53 @@ module Ougai
       end
     end
 
-    def level
-      @parent.level
+    def level=(severity)
+      if severity.is_a?(Integer)
+        @level = severity
+      elsif severity.is_a?(String)
+        @level = from_label(severity.upcase)
+      elsif severity.is_a?(Symbol)
+        @level = from_label(severity.to_s.upcase)
+      else
+        @level = nil
+      end
     end
+
+    def level
+      @level || @parent.level
+    end
+
+    alias sev_threshold= level=
+    alias sev_threshold level
 
     # Whether the current severity level allows for logging DEBUG.
     # @return [Boolean] true if allows
     def debug?
-      @parent.debug?
+      level <= DEBUG
     end
 
     # Whether the current severity level allows for logging INFO.
     # @return [Boolean] true if allows
     def info?
-      @parent.info?
+      level <= INFO
     end
 
     # Whether the current severity level allows for logging WARN.
     # @return [Boolean] true if allows
     def warn?
-      @parent.warn?
+      level <= WARN
     end
 
     # Whether the current severity level allows for logging ERROR.
     # @return [Boolean] true if allows
     def error?
-      @parent.error?
+      level <= ERROR
     end
 
     # Whether the current severity level allows for logging FATAL.
     # @return [Boolean] true if allows
     def fatal?
-      @parent.fatal?
+      level <= FATAL
     end
 
     # @private

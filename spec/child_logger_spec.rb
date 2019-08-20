@@ -29,13 +29,11 @@ describe Ougai::ChildLogger do
     items[0]
   }
 
-  describe '#level propagated from parent one' do
+  describe '#level' do
     let(:logger) { parent_logger.child }
+    let(:log_msg) { 'log message' }
 
-    context 'TRACE' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Ougai::Logger::TRACE }
-
+    shared_examples 'trace logging' do
       it 'outputs trace message' do
         logger.trace(log_msg)
         expect(item).to be_log_message(log_msg, 10)
@@ -56,10 +54,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'DEBUG' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::DEBUG }
-
+    shared_examples 'debug logging' do
       it 'does not output trace message' do
         logger.trace(log_msg)
         expect(item).to be_nil
@@ -85,10 +80,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'INFO' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::INFO }
-
+    shared_examples 'info logging' do
       it 'does not output debug message' do
         logger.debug(log_msg)
         expect(item).to be_nil
@@ -114,10 +106,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'WARN' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::WARN }
-
+    shared_examples 'warn logging' do
       it 'does not output info message' do
         logger.info(log_msg)
         expect(item).to be_nil
@@ -143,10 +132,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'ERROR' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::ERROR }
-
+    shared_examples 'error logging' do
       it 'does not output warning message' do
         logger.warn(log_msg)
         expect(item).to be_nil
@@ -172,10 +158,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'FATAL' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::FATAL }
-
+    shared_examples 'fatal logging' do
       it 'does not output error message' do
         logger.error(log_msg)
         expect(item).to be_nil
@@ -201,10 +184,7 @@ describe Ougai::ChildLogger do
       end
     end
 
-    context 'UNKNOWN' do
-      let(:log_msg) { 'log message' }
-      before { parent_logger.level = Logger::UNKNOWN }
-
+    shared_examples 'unknown logging' do
       it 'does not output fatal message' do
         logger.fatal(log_msg)
         expect(item).to be_nil
@@ -223,6 +203,162 @@ describe Ougai::ChildLogger do
         expect(logger.error?).to be_falsey
         expect(logger.fatal?).to be_falsey
       end
+    end
+
+    context 'TRACE the same level as parent' do
+      it_behaves_like 'trace logging' do
+        before do
+          parent_logger.level = Ougai::Logger::TRACE
+          logger.level = Ougai::Logger::TRACE
+        end
+      end
+    end
+
+    context 'DEBUG above parent level' do
+      it_behaves_like 'debug logging' do
+        before do
+          parent_logger.level = Ougai::Logger::TRACE
+          logger.level = Ougai::Logger::DEBUG
+        end
+      end
+    end
+
+    context 'INFO above parent level' do
+      it_behaves_like 'info logging' do
+        before do
+          parent_logger.level = Ougai::Logger::DEBUG
+          logger.level = Ougai::Logger::INFO
+        end
+      end
+    end
+
+    context 'WARN above parent level' do
+      it_behaves_like 'warn logging' do
+        before do
+          parent_logger.level = Ougai::Logger::INFO
+          logger.level = Ougai::Logger::WARN
+        end
+      end
+    end
+
+    context 'ERROR above parent level' do
+      it_behaves_like 'error logging' do
+        before do
+          parent_logger.level = Ougai::Logger::WARN
+          logger.level = Ougai::Logger::ERROR
+        end
+      end
+    end
+
+    context 'FATAL above parent level' do
+      it_behaves_like 'fatal logging' do
+        before do
+          parent_logger.level = Ougai::Logger::ERROR
+          logger.level = Ougai::Logger::FATAL
+        end
+      end
+    end
+
+    context 'UNKNOWN the same level as parent' do
+      it_behaves_like 'unknown logging' do
+        before do
+          parent_logger.level = Ougai::Logger::UNKNOWN
+          logger.level = Ougai::Logger::UNKNOWN
+        end
+      end
+    end
+
+    context 'propagated from parent TRACE' do
+      it_behaves_like 'trace logging' do
+        before do
+          parent_logger.level = Ougai::Logger::TRACE
+        end
+      end
+    end
+
+    context 'propagated from parent DEBUG' do
+      it_behaves_like 'debug logging' do
+        before do
+          parent_logger.level = Ougai::Logger::DEBUG
+        end
+      end
+    end
+
+    context 'propagated from parent INFO' do
+      it_behaves_like 'info logging' do
+        before do
+          parent_logger.level = Ougai::Logger::INFO
+        end
+      end
+    end
+
+    context 'propagated from parent WARN' do
+      it_behaves_like 'warn logging' do
+        before do
+          parent_logger.level = Ougai::Logger::WARN
+        end
+      end
+    end
+
+    context 'propagated from parent ERROR' do
+      it_behaves_like 'error logging' do
+        before do
+          parent_logger.level = Ougai::Logger::ERROR
+        end
+      end
+    end
+
+    context 'propagated from parent FATAL' do
+      it_behaves_like 'fatal logging' do
+        before do
+          parent_logger.level = Ougai::Logger::FATAL
+        end
+      end
+    end
+
+    context 'propagated from parent UNKNOWN' do
+      it_behaves_like 'unknown logging' do
+        before do
+          parent_logger.level = Ougai::Logger::UNKNOWN
+        end
+      end
+    end
+
+    context 'set a level once, set nil' do
+      before do
+        parent_logger.level = Ougai::Logger::WARN
+        logger.level = Ougai::Logger::INFO
+      end
+
+      it 'propagates from parent level' do
+        expect(logger.level).to eq Ougai::Logger::INFO
+        logger.level = nil
+        expect(logger.level).to eq Ougai::Logger::WARN
+      end
+    end
+
+    context 'set wrong name level' do
+      it 'throws ArgumentErrror' do
+        expect { logger.level = :wrong_level }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe '#sev_threshold' do
+    let(:logger) { parent_logger.child }
+
+    it 'is the alias of level' do
+      logger.sev_threshold = Ougai::Logger::INFO
+      expect(logger.sev_threshold).to eq Ougai::Logger::INFO
+      expect(logger.level).to eq Ougai::Logger::INFO
+
+      logger.level = :trace
+      expect(logger.sev_threshold).to eq Ougai::Logger::TRACE
+      expect(logger.level).to eq Ougai::Logger::TRACE
+
+      logger.sev_threshold = 'unknown'
+      expect(logger.sev_threshold).to eq Ougai::Logger::UNKNOWN
+      expect(logger.level).to eq Ougai::Logger::UNKNOWN
     end
   end
 

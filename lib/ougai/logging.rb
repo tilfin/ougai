@@ -10,10 +10,16 @@ module Ougai
       include ::Logger::Severity
       TRACE = -1
 
-      SEV_LABEL = %w(TRACE DEBUG INFO WARN ERROR FATAL ANY)
+      SEV_LABEL = %w(TRACE DEBUG INFO WARN ERROR FATAL UNKNOWN)
 
       def to_label(severity)
         SEV_LABEL[severity + 1] || 'ANY'
+      end
+
+      def from_label(severity)
+        SEV_LABEL.index(severity) - 1
+      rescue
+        raise ArgumentError, "invalid log level: #{severity}"
       end
     end
     include Severity

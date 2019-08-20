@@ -204,7 +204,7 @@ But if the field's type is *Array*, both with_field value and logging value are 
 logger = Ougai::Logger.new(STDOUT)
 logger.with_fields = { app: 'yourapp', tags: ['service'], kind: 'main' }
 
-child_logger = logger.child({ tags:['user'], kind: 'logic' })
+child_logger = logger.child({ tags: ['user'], kind: 'logic' })
 logger.info('Created child logger')
 
 child_logger.info('Created a user', name: 'Mike')
@@ -219,14 +219,25 @@ gc_logger.child({ mode: 'processed' }) do |gcc_logger|
 
   :some_return_value
 end
+
+child_logger.sev_threshold = :error # alias of level
+child_logger.info('This is not outputted')
+gc_logger.info('This is not outputted')
+child_logger.error('This is outputted')
+gc_logger.error('This is outputted')
+
+child_logger.level = :debug # does not work because the level is below parent one
+child_logger.debug('This is not outputted')
 ```
 
 ```json
-{"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service"],"kind":"main","msg":"Created child logger"}
-{"name":"Mike","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created a user"}
-{"name":"main","hostname":"mint2","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created grand child logger"}
-{"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","age":34,"weight":72,"msg":"something detail"}
-{"name":"main","hostname":"mint2","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","mode":"processed","msg":"Great-grandchild logger that will be cleaned up on block exit."}
+{"name":"main","hostname":"mint","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service"],"kind":"main","msg":"Created child logger"}
+{"name":"Mike","hostname":"mint","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created a user"}
+{"name":"main","hostname":"mint","pid":8342,"level":30,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"Created grand child logger"}
+{"name":"main","hostname":"mint","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","age":34,"weight":72,"msg":"something detail"}
+{"name":"main","hostname":"mint","pid":8342,"level":20,"time":"2017-08-01T22:07:20.400+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","mode":"processed","msg":"Great-grandchild logger that will be cleaned up on block exit."}
+{"name":"main","hostname":"mint","pid":4894,"level":50,"time":"2017-08-01T22:07:20.401+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"logic","msg":"This is outputed"}
+{"name":"main","hostname":"mint","pid":4894,"level":50,"time":"2017-08-01T22:07:20.401+09:00","v":0,"app":"yourapp","tags":["service","user"],"kind":"detail","msg":"This is outputed"}
 ```
 
 If any field exists in both parent log and child log, the parent value is overridden or merged by child value.

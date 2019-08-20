@@ -323,6 +323,25 @@ describe Ougai::ChildLogger do
         end
       end
     end
+
+    context 'set a level once, set nil' do
+      before do
+        parent_logger.level = Ougai::Logger::WARN
+        logger.level = Ougai::Logger::INFO
+      end
+
+      it 'propagates from parent level' do
+        expect(logger.level).to eq Ougai::Logger::INFO
+        logger.level = nil
+        expect(logger.level).to eq Ougai::Logger::WARN
+      end
+    end
+
+    context 'set wrong name level' do
+      it 'throws ArgumentErrror' do
+        expect { logger.level = :wrong_level }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   describe '#sev_threshold' do

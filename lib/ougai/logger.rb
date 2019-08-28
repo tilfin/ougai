@@ -17,7 +17,7 @@ module Ougai
       @default_message = 'No message'
       @exc_key = :err
       @with_fields = {}
-      @formatter = create_formatter
+      @formatter = create_formatter if @formatter.nil?
     end
 
     class << self

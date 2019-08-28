@@ -51,6 +51,24 @@ describe Ougai::Logger do
     end
   end
 
+  describe '.new' do
+    context 'if formatter argument is not specified' do
+      it 'sets Bunyan to formatter attribute' do
+        expect(logger.formatter).to be_an(Ougai::Formatters::Bunyan)
+      end
+    end
+
+    if RUBY_VERSION > '2.4'
+      context 'if formatter argument is specified' do
+        it 'sets it to formatter attribute' do
+          a_formatter = Ougai::Formatters::Readable.new
+          a_logger = described_class.new(io, formatter: a_formatter)
+          expect(a_logger.formatter).to eq a_formatter
+        end
+      end
+    end
+  end
+
   shared_examples 'log' do
     context 'with message' do
       it 'outputs valid' do

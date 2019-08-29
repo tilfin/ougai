@@ -107,8 +107,7 @@ module Ougai
       end
     end
 
-    private
-
+    # @private
     def log(severity, message, ex, data, block)
       return true if level > severity
       args = block ? block.call : [message, ex, data]

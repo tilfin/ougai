@@ -645,7 +645,7 @@ describe Ougai::Logger do
       end
 
       it 'outputs info log with block on both loggers' do
-        logger.info(log_msg, foo: 2)
+        logger.info { [log_msg, { foo: 2 }] }
         expect(item).to be_log_message(log_msg, 30)
         expect(item).to include_data(foo: 2)
         expect(another_item).to be_log_message(log_msg, 30)

@@ -1,23 +1,22 @@
 require 'spec_helper'
 
 describe Ougai::Formatters::Bunyan do
-  let(:data) do
-    {
-      msg: 'Log Message!',
+  let(:item) do
+    Ougai::LogItem.new('default message', ['Log Message!', {
       status: 200,
       method: 'GET',
       path: '/'
-    }
+    }])
   end
 
-  let(:stack) { "error1.rb\n  error2.rb" }
+  let(:stack) { ["error1.rb", "error2.rb"] }
 
-  let(:err) do
-    {
-      name: 'DummyError',
-      message: 'it is dummy.',
-      stack: stack
-    }
+  class DummyError < Exception; end
+
+  let(:ex) do
+    ex = DummyError.new('it is dummy.')
+    ex.set_backtrace(stack)
+    ex
   end
 
   let(:formatter) { described_class.new }
@@ -36,7 +35,7 @@ describe Ougai::Formatters::Bunyan do
     }
 
   describe '#call' do
-    subject { formatter.call(severity, Time.now, nil, data) }
+    subject { formatter.call(severity, Time.now, nil, item) }
 
     context 'jsonize is true and with_newline is true' do
       let!(:severity) { 'DEBUG' }
@@ -44,7 +43,7 @@ describe Ougai::Formatters::Bunyan do
       it 'includes valid strings' do
         expect(subject).to end_with("\n")
         result = JSON.parse(subject.chomp, symbolize_names: true)
-        expect(result).to include(data.merge(pid: $$, level: 20, v: 0))
+        expect(result).to include(item.data.merge(pid: $$, level: 20, v: 0))
         expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
       end
     end
@@ -58,7 +57,7 @@ describe Ougai::Formatters::Bunyan do
         let!(:severity) { 'TRACE' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(pid: $$, level: 10, v: 0))
+          expect(subject).to include(item.data.merge(pid: $$, level: 10, v: 0))
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
@@ -67,7 +66,7 @@ describe Ougai::Formatters::Bunyan do
         let!(:severity) { 'DEBUG' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(pid: $$, level: 20, v: 0))
+          expect(subject).to include(item.data.merge(pid: $$, level: 20, v: 0))
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
@@ -76,7 +75,7 @@ describe Ougai::Formatters::Bunyan do
         let!(:severity) { 'INFO' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(pid: $$, level: 30, v: 0))
+          expect(subject).to include(item.data.merge(pid: $$, level: 30, v: 0))
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
@@ -85,7 +84,7 @@ describe Ougai::Formatters::Bunyan do
         let!(:severity) { 'WARN' }
 
         it 'includes valid hash' do
-          expect(subject).to include(data.merge(pid: $$, level: 40, v: 0))
+          expect(subject).to include(item.data.merge(pid: $$, level: 40, v: 0))
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
@@ -93,30 +92,32 @@ describe Ougai::Formatters::Bunyan do
       context 'when severity is ERROR' do
         let!(:severity) { 'ERROR' }
 
-        before { data.merge!({ err: err }) }
+        before {
+          item.exc = ex
+        }
 
         it 'includes valid hash' do
-          expect(subject).to include(pid: $$, level: 50, v: 0, err: err)
+          expect(subject).to include(pid: $$, level: 50, v: 0, err: { message: ex.message, name: ex.class.name, stack: ex.backtrace.join("\n  ") })
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
 
       context 'when severity is FATAL' do
         let!(:severity) { 'FATAL' }
-        let!(:data) do
-          { msg: 'TheEnd', err: err }
+        let!(:item) do
+          Ougai::LogItem.new('default message', ['TheEnd', ex])
         end
 
         it 'includes valid hash' do
-          expect(subject).to include(pid: $$, level: 60, v: 0, err: err)
+          expect(subject).to include(pid: $$, level: 60, v: 0, err: { message: ex.message, name: ex.class.name, stack: ex.backtrace.join("\n  ") })
           expect(subject[:time]).to be_an_instance_of(Time)
         end
       end
 
       context 'when severity is UNKNOWN' do
         let!(:severity) { 'ANY' }
-        let!(:data) do
-          { msg: 'unknown msg' }
+        let!(:item) do
+          Ougai::LogItem.new('default message', ['unknown msg'])
         end
 
         it 'includes valid hash' do
@@ -135,7 +136,7 @@ describe Ougai::Formatters::Bunyan do
       it 'includes valid strings' do
         expect(subject).not_to end_with("\n")
         result = JSON.parse(subject, symbolize_names: true)
-        expect(result).to include(data.merge(pid: $$, level: 30, v: 0))
+        expect(result).to include(item.data.merge(pid: $$, level: 30, v: 0))
         expect(result[:time]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
       end
     end
@@ -148,7 +149,7 @@ describe Ougai::Formatters::Bunyan do
       end
 
       it 'applys output' do
-        subject = formatter.call('DEBUG', Time.now, nil, data)
+        subject = formatter.call('DEBUG', Time.now, nil, item)
         result = JSON.parse(subject, symbolize_names: true)
         expect(result[:time]).to match(/^\d{2}:\d{2}:\d{2} [AP]M$/)
       end

@@ -29,21 +29,22 @@ module Ougai
         raise NotImplementedError, 'Not support datetime_format attribute' unless val.nil?
       end
 
-      def _call(severity, time, progname, data)
-        flat_err(data)
-        dump({
+      def _call(severity, time, progname, item)
+        data = {
           name: progname || @app_name,
           hostname: @hostname,
           pid: $$,
           level: to_level(severity),
           time: time,
+          msg: item.msg,
           v: 1
-        }.merge(data))
+        }
+        flat_err(serialize_exc(item.exc), data) if item.exc
+        dump(data.merge(item.data))
       end
 
-      def flat_err(data)
-        return unless data.key?(:err)
-        err = data.delete(:err)
+      def flat_err(err, data)
+        return unless err
         msg = err[:message]
         data[:type] ||= 'Error'
         data[:msg] ||= msg

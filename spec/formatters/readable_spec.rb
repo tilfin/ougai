@@ -3,21 +3,20 @@ require 'spec_helper'
 describe Ougai::Formatters::Readable do
   let!(:re_start_with_datetime) { /^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(Z|[\+\-\:0-9]{4,6})\]/ }
 
-  let(:data) do
-    {
-      msg: 'Log Message!',
+  let(:item) do
+    Ougai::LogItem.new('default message', ['Log Message!', {
       status: 200,
       method: 'GET',
       path: '/'
-    }
+    }])
   end
 
-  let(:err) do
-    {
-      name: 'DummyError',
-      message: 'it is dummy.',
-      stack: "error1.rb\n  error2.rb"
-    }
+  class DummyError < Exception; end
+
+  let(:ex) do
+    ex = DummyError.new('it is dummy.')
+    ex.set_backtrace(["error1.rb", "error2.rb"])
+    ex
   end
 
   let(:formatter) { described_class.new }
@@ -36,7 +35,7 @@ describe Ougai::Formatters::Readable do
     }
 
   context 'when severity is TRACE' do
-    subject { formatter.call('TRACE', Time.now, nil, data) }
+    subject { formatter.call('TRACE', Time.now, nil, item) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -46,7 +45,7 @@ describe Ougai::Formatters::Readable do
   end
 
   context 'when severity is DEBUG' do
-    subject { formatter.call('DEBUG', Time.now, nil, data) }
+    subject { formatter.call('DEBUG', Time.now, nil, item) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -56,7 +55,7 @@ describe Ougai::Formatters::Readable do
   end
 
   context 'when severity is INFO' do
-    subject { formatter.call('INFO', Time.now, nil, data) }
+    subject { formatter.call('INFO', Time.now, nil, item) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -66,7 +65,7 @@ describe Ougai::Formatters::Readable do
   end
 
   context 'when severity is WARN' do
-    subject { formatter.call('WARN', Time.now, nil, data) }
+    subject { formatter.call('WARN', Time.now, nil, item) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -76,7 +75,10 @@ describe Ougai::Formatters::Readable do
   end
 
   context 'when severity is ERROR' do
-    subject { formatter.call('ERROR', Time.now, nil, data.merge({ err: err })) }
+    subject {
+      item.exc = ex
+      formatter.call('ERROR', Time.now, nil, item)
+    }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -86,17 +88,23 @@ describe Ougai::Formatters::Readable do
   end
 
   context 'when severity is FATAL' do
-    subject { formatter.call('FATAL', Time.now, nil, { msg: 'TheEnd', err: err }) }
+    subject {
+      item.msg = 'TheEnd'
+      item.exc = ex
+      formatter.call('FATAL', Time.now, nil, item) }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
       expect(subject).to include("\e[0;35mFATAL\e[0m: TheEnd")
-      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include("error1.rb\n  error2.rb")
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include("    error1.rb\n    error2.rb")
     end
   end
 
   context 'when severity is UNKNOWN' do
-    subject { formatter.call('ANY', Time.now, nil, { msg: 'unknown msg' }) }
+    subject {
+      item.msg = 'unknown msg'
+      formatter.call('ANY', Time.now, nil, item)
+    }
 
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
@@ -106,7 +114,7 @@ describe Ougai::Formatters::Readable do
 
   context 'when logger has excluded_fields' do
     subject do
-      described_class.new(excluded_fields: [:status, :method]).call('DEBUG', Time.now, nil, data)
+      described_class.new(excluded_fields: [:status, :method]).call('DEBUG', Time.now, nil, item)
     end
 
     it 'includes valid strings' do
@@ -120,7 +128,7 @@ describe Ougai::Formatters::Readable do
 
   describe '#datetime_format' do
     subject do
-      formatter.call('DEBUG', Time.now, nil, data)
+      formatter.call('DEBUG', Time.now, nil, item)
     end
 
     context 'is time AM/PM format' do

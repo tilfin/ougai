@@ -568,7 +568,7 @@ describe Ougai::Logger do
       before do
         logger.level = Logger::INFO
         logger.before_log = lambda do |data|
-          data[:context_id] = 123
+          data.data[:context_id] = 123
         end
       end
 

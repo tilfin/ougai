@@ -527,8 +527,8 @@ describe Ougai::ChildLogger do
 
     context 'child logger to be set before_log' do
       before do
-        logger.before_log = lambda do |data|
-          data[:context_id] = 123
+        logger.before_log = lambda do |item|
+          item.data[:context_id] = 123
         end
       end
 
@@ -541,8 +541,8 @@ describe Ougai::ChildLogger do
 
     context 'parent logger to be set before_log' do
       before do
-        parent_logger.before_log = lambda do |data|
-          data[:context_id] = 12345
+        parent_logger.before_log = lambda do |item|
+          item.data[:context_id] = 12345
         end
       end
 
@@ -555,12 +555,12 @@ describe Ougai::ChildLogger do
 
     context 'both child logger and parent logger to be set before_log' do
       before do
-        logger.before_log = lambda do |data|
-          data[:context_id] = 67890
-          data[:context_name] = 'sub'
+        logger.before_log = lambda do |item|
+          item.data[:context_id] = 67890
+          item.data[:context_name] = 'sub'
         end
-        parent_logger.before_log = lambda do |data|
-          data[:context_id] = 12345
+        parent_logger.before_log = lambda do |item|
+          item.data[:context_id] = 12345
         end
       end
 

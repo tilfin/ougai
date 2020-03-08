@@ -244,15 +244,15 @@ If any field exists in both parent log and child log, the parent value is overri
 
 ### Hook before logging
 
-Setting `before_log` of logger or child an *lambda* with `data` field, a process can be run before log each output.
+Setting `before_log` of logger or child an *lambda* with `item` field, a process can be run before log each output.
 
 * Adding variable data (like Thread ID) to logging data can be defined in common.
 * Returning `false` in *lambda*, the log is cancelled and does not output.
 * The *before_log* of child logger is run ahead of the parent logger's.
 
 ```ruby
-logger.before_log = lambda do |data|
-  data[:thread_id] = Thread.current.object_id.to_s(36)
+logger.before_log = lambda do |item|
+  item.data[:thread_id] = Thread.current.object_id.to_s(36)
 end
 
 logger.debug('on main thread')

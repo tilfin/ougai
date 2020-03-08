@@ -31,11 +31,11 @@ module Ougai
         self.datetime_format = nil
       end
 
-      def call(severity, time, progname, data)
-        _call(severity, time, progname, data.is_a?(Hash) ? data : { msg: data.to_s })
+      def call(severity, time, progname, item)
+        _call(severity, time, progname, item)
       end
 
-      def _call(severity, time, progname, data)
+      def _call(severity, time, progname, item)
         raise NotImplementedError, "_call must be implemented"
       end
 

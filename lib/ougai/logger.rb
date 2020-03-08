@@ -107,75 +107,16 @@ module Ougai
     end
 
     def write(severity, args, fields, hooks)
-      data = weak_merge!(to_item(args), fields)
+      item = to_item(args)
+      weak_merge!(item.data, fields)
       hooks.each do |hook|
-        return false if hook.call(data) == false
+        return false if hook.call(item) == false
       end
-      add(severity, data)
+      add(severity, item)
     end
 
     def to_item(args)
-      msg, ex, data = args
-
-      if msg.nil?
-        { msg: @default_message }
-      elsif ex.nil?
-        create_item_with_1arg(msg)
-      elsif data.nil?
-        create_item_with_2args(msg, ex)
-      else
-        create_item_with_3args(msg, ex, data)
-      end
-    end
-
-    def create_item_with_1arg(arg)
-      item = {}
-      if arg.is_a?(Exception)
-        item[:msg] = arg.to_s
-        set_exc(item, arg)
-      elsif arg.is_a?(String)
-        item[:msg] = arg
-      else
-        item.merge!(as_hash(arg))
-        item[:msg] ||= @default_message
-      end
-      item
-    end
-
-    def create_item_with_2args(arg1, arg2)
-      item = {}
-      if arg2.is_a?(Exception) # msg, ex
-        item[:msg] = arg1.to_s
-        set_exc(item, arg2)
-      elsif arg1.is_a?(Exception) # ex, data
-        set_exc(item, arg1)
-        item.merge!(as_hash(arg2))
-        item[:msg] ||= arg1.to_s
-      else # msg, data
-        item[:msg] = arg1.to_s
-        item.merge!(as_hash(arg2))
-      end
-      item
-    end
-
-    def create_item_with_3args(msg, ex, data)
-      {}.tap do |item|
-        set_exc(item, ex) if ex.is_a?(Exception)
-        item.merge!(as_hash(data))
-        item[:msg] = msg.to_s
-      end
-    end
-
-    def set_exc(item, exc)
-      item[@exc_key] = @formatter.serialize_exc(exc)
-    end
-
-    def as_hash(data)
-      if data.is_a?(Hash) || data.respond_to?(:to_hash)
-        data
-      else
-        { data: data }
-      end
+      Ougai::LogItem.new(@default_message, args)
     end
   end
 end

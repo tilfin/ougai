@@ -28,16 +28,15 @@ module Ougai
         load_dependent
       end
 
-      def _call(severity, time, progname, _data)
-        data = _data.dup
-        msg = data.delete(:msg)
+      def _call(severity, time, progname, item)
+        data = item.data
         level = @plain ? severity : colored_level(severity)
         dt = format_datetime(time)
-        err_str = create_err_str(data)
+        err_str = create_err_str(serialize_exc(item.exc)) if item.exc
 
         @excluded_fields.each { |f| data.delete(f) }
         data_str = create_data_str(data)
-        format_log_parts(dt, level, msg, err_str, data_str)
+        format_log_parts(dt, level, item.msg, err_str, data_str)
       end
 
       def serialize_backtrace=(value)
@@ -73,9 +72,8 @@ module Ougai
         "\e[#{color}m#{severity}\e[0m"
       end
 
-      def create_err_str(data)
-        return nil unless data.key?(:err)
-        err = data.delete(:err)
+      def create_err_str(err)
+        return nil unless err
         err_str = "  #{err[:name]} (#{err[:message]}):"
         err_str += "\n" + (" " * @trace_indent) + err[:stack] if err.key?(:stack)
         err_str

@@ -23,15 +23,18 @@ module Ougai
         init_opts_for_json(opts)
       end
 
-      def _call(severity, time, progname, data)
-        dump({
+      def _call(severity, time, progname, item)
+        data = {
           name: progname || @app_name,
           hostname: @hostname,
           pid: $$,
           level: to_level(severity),
           time: time,
+          msg: item.msg,
           v: 0
-        }.merge(data))
+        }.merge(item.data)
+        data[:err] = serialize_exc(item.exc) if item.exc
+        dump(data)
       end
 
       def convert_time(data)

@@ -21,16 +21,16 @@ Gem::Specification.new do |spec|
   spec.test_files    = Dir['spec/**/*']
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.3.0'
+  spec.required_ruby_version = '>= 2.4.0'
 
   if RUBY_PLATFORM =~ /java/
     spec.platform = 'java'
     spec.add_dependency 'jrjackson', '~> 0.4'
   else
-    spec.add_dependency "oj", "~> 3.4"
+    spec.add_dependency "oj", "~> 3.10"
   end
 
-  spec.add_development_dependency "bundler", ">= 1.11.0"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "bundler", ">= 2.1.4"
+  spec.add_development_dependency "rake", ">= 13.0.1"
+  spec.add_development_dependency "rspec", ">= 3.9.0"
 end

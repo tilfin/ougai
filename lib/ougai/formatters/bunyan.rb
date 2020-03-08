@@ -30,10 +30,10 @@ module Ougai
           pid: $$,
           level: to_level(severity),
           time: time,
-          msg: item.msg,
           v: 0
         }.merge(item.data)
-        data[:err] = serialize_exc(item.exc) if item.exc
+        data[@msg_key] = item.msg
+        data[@exc_key] = serialize_exc(item.exc) if item.exc
         dump(data)
       end
 

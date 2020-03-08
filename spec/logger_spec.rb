@@ -213,6 +213,7 @@ describe Ougai::Logger do
 
       it 'outputs valid overridden err field' do
         logger.with_fields = { err: 'original' }
+
         begin
           raise StandardError, 'errmsg2'
         rescue => ex

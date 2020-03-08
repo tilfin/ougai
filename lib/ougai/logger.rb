@@ -3,19 +3,17 @@
 module Ougai
   # Main Logger
   # @attr [String] default_message Use this if log message is not specified (by default this is 'No message').
-  # @attr [String] exc_key The field name of Exception (by default this is :err).
   # @attr [Hash] with_fields The fields appending to all logs.
   # @attr [Proc] before_log Hook before logging.
   class Logger < ::Logger
     include Logging
 
-    attr_accessor :default_message, :exc_key
+    attr_accessor :default_message
 
     def initialize(*args)
       super(*args)
       @before_log = nil
       @default_message = 'No message'
-      @exc_key = :err
       @with_fields = {}
       @formatter = create_formatter if @formatter.nil?
     end

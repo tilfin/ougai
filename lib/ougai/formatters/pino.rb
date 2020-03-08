@@ -36,18 +36,18 @@ module Ougai
           pid: $$,
           level: to_level(severity),
           time: time,
-          msg: item.msg,
           v: 1
-        }
+        }.merge(item.data)
+        data[@msg_key] = item.msg
         flat_err(serialize_exc(item.exc), data) if item.exc
-        dump(data.merge(item.data))
+        dump(data)
       end
 
       def flat_err(err, data)
         return unless err
         msg = err[:message]
         data[:type] ||= 'Error'
-        data[:msg] ||= msg
+        data[@msg_key] ||= msg
         stack = "#{err[:name]}: #{msg}"
         stack += "\n" + (" " * @trace_indent) + err[:stack] if err.key?(:stack)
         data[:stack] ||= stack

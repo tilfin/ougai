@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{JSON logger compatible with node-bunyan or pino is capable of handling structured data easily.}
   spec.description = <<-EOF
     A structured logging system is capable of handling a message, custom data or an exception easily.
-    It has JSON formatters compatible with Bunyan or pino for Node.js and human readable formatter with Awesome Print for console.
+    It has JSON formatters compatible with Bunyan or pino for Node.js and human readable formatter with Amazing Print for console.
   EOF
   spec.homepage      = "https://github.com/tilfin/ougai"
   spec.license       = "MIT"

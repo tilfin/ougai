@@ -9,7 +9,7 @@ Ougai
 
 A structured logging system is capable of handling a message, structured data or an exception easily.
 It has JSON formatters compatible with [Bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) for Node.js and
-human readable formatter with [Awesome Print](https://github.com/awesome-print/awesome_print) for console.
+human readable formatter with [Awesome Print](https://github.com/awesome-print/amazing_print) for console.
 
 ## Installation
 
@@ -335,10 +335,10 @@ If you use *Ougai::Formatters::Pino*, you can use command [pino](https://github.
 
 ## Use human Readable formatter for console
 
-Add awesome_print to Gemfile and `bundle`
+Add amazing_print to Gemfile and `bundle`
 
 ```ruby
-gem 'awesome_print'
+gem 'amazing_print'
 ```
 
 Set *Ougai::Formatters::Readable* instance to `formatter` accessor

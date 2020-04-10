@@ -4,7 +4,7 @@ require 'ougai/formatters/base'
 
 module Ougai
   module Formatters
-    # A human readble formatter with awesome_print
+    # A human readble formatter with amazing_print
     # @attr [Boolean] plain Whether log should be plain not colorized.
     # @attr [Array<String, Symbol>] excluded_fields The fields excluded from all logs
     class Readable < Base
@@ -87,9 +87,9 @@ module Ougai
       end
 
       def load_dependent
-        require 'awesome_print'
+        require 'amazing_print'
       rescue LoadError
-        puts 'You must install the awesome_print gem to use this output.'
+        puts 'You must install the amazing_print gem to use this output.'
         raise
       end
     end

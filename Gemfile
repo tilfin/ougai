@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'awesome_print'
+  gem 'amazing_print'
   gem 'simplecov', '< 0.18', require: false
   gem 'timecop'
   gem 'yard'

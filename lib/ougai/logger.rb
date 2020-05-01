@@ -11,8 +11,8 @@ module Ougai
 
     attr_accessor :default_message, :exc_key
 
-    def initialize(*args)
-      super(*args)
+    def initialize(*, **)
+      super
       @before_log = nil
       @default_message = 'No message'
       @exc_key = :err

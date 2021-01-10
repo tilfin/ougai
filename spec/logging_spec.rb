@@ -3,7 +3,14 @@ require 'spec_helper'
 describe Ougai::Logging do
   subject do
     m = described_class
-    Class.new { include m }.new
+
+    Class.new do
+      include m
+
+      def level
+        -1
+      end
+    end.new
   end
 
   describe '#weak_merge!' do
@@ -28,6 +35,56 @@ describe Ougai::Logging do
   describe '#append' do
     it 'is not implemented' do
       expect{ subject.send(:append, :arg1, :arg2) }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe '#add' do
+    context 'severity is specified level' do
+      it 'calls append with specified level' do
+        data = double('data')
+        expect(subject).to receive(:append).with(::Logger::Severity::DEBUG, ['debug message', data])
+        subject.add(::Logger::Severity::DEBUG, 'debug message', data)
+      end
+    end
+
+    context 'severity is nil' do
+      it 'calls append with UNKNOWN level' do
+        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message'])
+        subject.add(nil, 'message')
+      end
+    end
+
+    context 'block given' do
+      it 'calls append with yielded arguments' do
+        expect(subject).to receive(:append).with(::Logger::Severity::WARN, ['block message'])
+        subject.log(::Logger::Severity::WARN) { ['block message'] }
+      end
+    end
+  end
+
+  describe '#log' do
+    context 'severity is specified' do
+      it 'calls append with specified level' do
+        ex = Exception.new
+        expect(subject).to receive(:append).with(::Logger::Severity::FATAL, ['fatal message', ex])
+        subject.log(::Logger::Severity::FATAL, 'fatal message', ex)
+      end
+    end
+
+    context 'severity is nil' do
+      it 'calls append with UNKNOWN level' do
+        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message'])
+        subject.log(nil, 'message')
+      end
+    end
+
+    context 'block given' do
+      it 'calls append with yielded arguments' do
+        ex = Exception.new
+        data = double('data')
+        expect(subject).to receive(:append).with(::Logger::Severity::INFO, ['block message', ex, data])
+        subject.log(::Logger::Severity::INFO) { ['block message', ex, data] }
+      end
     end
   end
 end

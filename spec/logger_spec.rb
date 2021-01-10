@@ -349,6 +349,14 @@ describe Ougai::Logger do
     it_behaves_like 'log'
   end
 
+  describe '#unknown' do
+    let(:log_level) { 70 }
+    let(:log_msg) { 'unknown message' }
+    let(:method) { 'unknown' }
+
+    it_behaves_like 'log'
+  end
+
   describe '#level' do
     context 'DEBUG' do
       let(:log_msg) { 'log message' }

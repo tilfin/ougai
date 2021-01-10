@@ -28,7 +28,7 @@ module Ougai
     # @return [Boolean] true
     # @see Logging#debug
     def trace(message = nil, ex = nil, data = nil, &block)
-      log(TRACE, message, ex, data, block)
+      add(TRACE, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as DEBUG.
@@ -39,43 +39,42 @@ module Ougai
     # @yieldreturn [String|Exception|Object|Array] Any one or more of former parameters
     # @return [Boolean] true
     def debug(message = nil, ex = nil, data = nil, &block)
-      log(DEBUG, message, ex, data, block)
+      add(DEBUG, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as INFO.
     # @return [Boolean] true
     # @see Logging#debug
     def info(message = nil, ex = nil, data = nil, &block)
-      log(INFO, message, ex, data, block)
+      add(INFO, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as WARN.
     # @return [Boolean] true
     # @see Logging#debug
     def warn(message = nil, ex = nil, data = nil, &block)
-      log(WARN, message, ex, data, block)
+      add(WARN, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as ERROR.
     # @return [Boolean] true
     # @see Logging#debug
     def error(message = nil, ex = nil, data = nil, &block)
-      log(ERROR, message, ex, data, block)
+      add(ERROR, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as FATAL.
     # @return [Boolean] true
     # @see Logging#debug
     def fatal(message = nil, ex = nil, data = nil, &block)
-      log(FATAL, message, ex, data, block)
+      add(FATAL, message, ex, data, &block)
     end
 
     # Log any one or more of a message, an exception and structured data as UNKNOWN.
     # @return [Boolean] true
     # @see Logging#debug
     def unknown(message = nil, ex = nil, data = nil, &block)
-      args = block ? yield : [message, ex, data]
-      append(UNKNOWN, args)
+      add(UNKNOWN, message, ex, data, &block)
     end
 
     # Whether the current severity level allows for logging TRACE.
@@ -83,6 +82,22 @@ module Ougai
     def trace?
       level <= TRACE
     end
+
+    # Log any one or more of a message, an exception and structured data as specified log level.
+    # If the block is given for delay evaluation, it returns them as an array or the one of them as a value.
+    # @param severity [Integer] The log level.
+    # @param message [String] The message to log. Use default_message if not specified.
+    # @param ex [Exception] The exception or the error
+    # @param data [Object] Any structured data
+    # @yieldreturn [String|Exception|Object|Array] Any one or more of former parameters
+    # @return [Boolean] true
+    def add(severity, *args)
+      severity ||= UNKNOWN
+      return true if level > severity
+      append(severity, block_given? ? yield : args)
+    end
+
+    alias log add
 
     # @private
     def chain(_severity, _args, _fields, _hooks)
@@ -105,13 +120,6 @@ module Ougai
           base_v
         end
       end
-    end
-
-    # @private
-    def log(severity, message, ex, data, block)
-      return true if level > severity
-      args = block ? block.call : [message, ex, data]
-      append(severity, args)
     end
   end
 end

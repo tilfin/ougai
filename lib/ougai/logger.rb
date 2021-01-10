@@ -7,6 +7,7 @@ module Ougai
   # @attr [Hash] with_fields The fields appending to all logs.
   # @attr [Proc] before_log Hook before logging.
   class Logger < ::Logger
+    alias_method :super_add, :add
     include Logging
 
     attr_accessor :default_message, :exc_key
@@ -38,9 +39,9 @@ module Ougai
     # @param logger [Logger] The logger receiving broadcast logs.
     def self.broadcast(logger)
       Module.new do |mdl|
-        define_method(:log) do |*args|
-          logger.log(*args)
-          super(*args)
+        define_method(:add) do |*args, &block|
+          logger.add(*args, &block)
+          super(*args, &block)
         end
 
         define_method(:level=) do |level|
@@ -111,7 +112,7 @@ module Ougai
       hooks.each do |hook|
         return false if hook.call(data) == false
       end
-      add(severity, data)
+      super_add(severity, data)
     end
 
     def to_item(args)

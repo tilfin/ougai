@@ -97,10 +97,10 @@ module Ougai
 
     alias log add
 
-    def _log(severity, message, ex, data, &block)
+    def _log(severity, *args)
       severity ||= UNKNOWN
       return true if level > severity
-      append(severity, block_given? ? yield : [message, ex, data])
+      append(severity, block_given? ? yield : args)
     end
 
     # @private

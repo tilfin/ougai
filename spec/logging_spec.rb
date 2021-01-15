@@ -54,10 +54,18 @@ describe Ougai::Logging do
       end
     end
 
-    context 'block given' do
-      it 'calls append with yielded arguments' do
-        expect(subject).to receive(:append).with(::Logger::Severity::WARN, ['block message'])
-        subject.log(::Logger::Severity::WARN) { ['block message'] }
+    context 'with block that yields message' do
+      it 'calls append with yielded message' do
+        expect(subject).to receive(:append).with(::Logger::Severity::WARN, 'block message')
+        subject.add(::Logger::Severity::WARN) { 'block message' }
+      end
+    end
+
+    context 'with block that yields array' do
+      it 'calls append with yielded array' do
+        data = double('data')
+        expect(subject).to receive(:append).with(::Logger::Severity::WARN, ['block message', data])
+        subject.add(::Logger::Severity::WARN) { ['block message', data] }
       end
     end
   end
@@ -78,7 +86,7 @@ describe Ougai::Logging do
       end
     end
 
-    context 'block given' do
+    context 'with block' do
       it 'calls append with yielded arguments' do
         ex = Exception.new
         data = double('data')

@@ -39,8 +39,8 @@ module Ougai
     # @param logger [Logger] The logger receiving broadcast logs.
     def self.broadcast(logger)
       Module.new do |mdl|
-        define_method(:add) do |*args, &block|
-          logger.add(*args, &block)
+        define_method(:_log) do |*args, &block|
+          logger._log(*args, &block)
           super(*args, &block)
         end
 

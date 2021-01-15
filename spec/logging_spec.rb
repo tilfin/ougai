@@ -42,14 +42,14 @@ describe Ougai::Logging do
     context 'severity is specified level' do
       it 'calls append with specified level' do
         data = double('data')
-        expect(subject).to receive(:append).with(::Logger::Severity::DEBUG, ['debug message', data])
+        expect(subject).to receive(:append).with(::Logger::Severity::DEBUG, ['debug message', data, nil])
         subject.add(::Logger::Severity::DEBUG, 'debug message', data)
       end
     end
 
     context 'severity is nil' do
       it 'calls append with UNKNOWN level' do
-        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message'])
+        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message', nil, nil])
         subject.add(nil, 'message')
       end
     end
@@ -66,14 +66,14 @@ describe Ougai::Logging do
     context 'severity is specified' do
       it 'calls append with specified level' do
         ex = Exception.new
-        expect(subject).to receive(:append).with(::Logger::Severity::FATAL, ['fatal message', ex])
+        expect(subject).to receive(:append).with(::Logger::Severity::FATAL, ['fatal message', ex, nil])
         subject.log(::Logger::Severity::FATAL, 'fatal message', ex)
       end
     end
 
     context 'severity is nil' do
       it 'calls append with UNKNOWN level' do
-        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message'])
+        expect(subject).to receive(:append).with(::Logger::Severity::UNKNOWN, ['message', nil, nil])
         subject.log(nil, 'message')
       end
     end

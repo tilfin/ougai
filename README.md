@@ -194,7 +194,18 @@ logger.info('Hello!', user: { name: 'Jiro' }, version: '2.3')
 ```
 
 If any field of with_fields is specified in each log, the field is overridden.
-But if the field's type is *Array*, both with_field value and logging value are merged with `concat` and `uniq`.
+If the field's type is *Array*, both with_field value and logging value are merged with `concat` and `uniq`.
+
+If the field's type is *Hash*, then values are merged recursively.
+
+```ruby
+logger.with_fields = { version: '1.1.0', user: { name: 'Taro' } }
+logger.debug(user: { age: 19 })
+```
+
+```json
+{"name":"test","hostname":"mint","pid":30182,"level":20,"time":"2017-07-22T20:52:12.332+09:00","v":0,"version":"1.1.0","msg":"No message","user":{"name":"Taro","age":19}}
+```
 
 ### Create a child logger
 
@@ -241,6 +252,8 @@ child_logger.debug('This is not outputted')
 ```
 
 If any field exists in both parent log and child log, the parent value is overridden or merged by child value.
+
+If the field's type is *Hash*, then values are merged recursively.
 
 ### Hook before logging
 

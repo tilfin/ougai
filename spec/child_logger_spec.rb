@@ -390,7 +390,7 @@ describe Ougai::ChildLogger do
           parent_logger.with_fields = { foo: 11 }
           logger.with_fields = { bar: '11' }
         end
- 
+
         it 'outputs with child fields' do
           logger.info(log_msg)
           parent_logger.info(parent_log_msg)
@@ -426,7 +426,7 @@ describe Ougai::ChildLogger do
         before do
           parent_logger.with_fields = { foo: 22 }
         end
- 
+
         it 'output with new parent fields' do
           logger.info(log_msg)
           parent_logger.info(parent_log_msg)
@@ -462,7 +462,7 @@ describe Ougai::ChildLogger do
         before do
           logger.with_fields = { bar: '33' }
         end
- 
+
         it 'output valid' do
           logger.info(log_msg)
           parent_logger.info(parent_log_msg)
@@ -478,35 +478,45 @@ describe Ougai::ChildLogger do
 
     context 'grandchild logger' do
       before do
-        parent_logger.with_fields = { tag: 'parent', tags: ['parent'] }
+        parent_logger.with_fields = { tag: 'parent', tags: ['parent'], event: { module: 'core' } }
       end
 
-      let(:logger) { parent_logger.child(tag: 'child', tags: ['child']) }
-      let(:grand_logger) { logger.child(tag: 'grandchild', tags: ['grandchild']) }
+      let(:logger) { parent_logger.child(tag: 'child', tags: ['child'], event: { dataset: 'core.child' }) }
+      let(:grand_logger) { logger.child(tag: 'grandchild', tags: ['grandchild'], event: { action: 'log-action' }) }
 
       it 'outputs with all merged fields' do
         grand_logger.info('Hi', foo: 3)
         logger.info(log_msg, foo: 2)
-        parent_logger.info(parent_log_msg, foo: 10)
-        parent_logger.info('Good evening!', foo: 11)
+        parent_logger.info(parent_log_msg, foo: 10, event: { module: 'service' })
+        parent_logger.info('Good evening!', foo: 11, event: { duration: 150 })
 
         expect(items[0]).to be_log_message('Hi', log_level)
-        expect(items[0]).to include(tag: 'grandchild', tags: ['parent', 'child', 'grandchild'], foo: 3)
+        expect(items[0]).to include(
+          tag: 'grandchild',
+          tags: ['parent', 'child', 'grandchild'],
+          foo: 3,
+          event: { module: 'core', dataset: 'core.child', action: 'log-action' }
+        )
 
         expect(items[1]).to be_log_message(log_msg, log_level)
-        expect(items[1]).to include(tag: 'child', tags: ['parent', 'child'], foo: 2)
+        expect(items[1]).to include(
+          tag: 'child',
+          tags: ['parent', 'child'],
+          foo: 2,
+          event: { module: 'core', dataset: 'core.child' }
+        )
 
         expect(items[2]).to be_log_message(parent_log_msg, log_level)
-        expect(items[2]).to include(tag: 'parent', tags: ['parent'], foo: 10)
+        expect(items[2]).to include(tag: 'parent', tags: ['parent'], foo: 10, event: { module: 'service' })
         expect(items[3]).to be_log_message('Good evening!', log_level)
-        expect(items[3]).to include(tag: 'parent', tags: ['parent'], foo: 11)
+        expect(items[3]).to include(tag: 'parent', tags: ['parent'], foo: 11, event: { module: 'core', duration: 150 })
       end
 
       context 'after updating child logger with_fields' do
         before do
           logger.with_fields = { bar: '33' }
         end
- 
+
         it 'outputs with child fields' do
           logger.info(log_msg)
           expect(items[0]).to be_log_message(log_msg, log_level)

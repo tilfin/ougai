@@ -120,6 +120,8 @@ module Ougai
       base_data.merge!(inferior_data) do |_, base_v, inferior_v|
         if base_v.is_a?(Array) and inferior_v.is_a?(Array)
           (inferior_v + base_v).uniq
+        elsif base_v.is_a?(Hash) and inferior_v.is_a?(Hash)
+          weak_merge!(base_v, inferior_v)
         else
           base_v
         end

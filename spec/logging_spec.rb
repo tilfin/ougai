@@ -24,6 +24,15 @@ describe Ougai::Logging do
       expect(result[:bar]).to eq('base')
       expect(result[:baz]).to eq(['B', 'A'])
     end
+
+    it 'merges hashes recursively' do
+      result = nil
+      subject.instance_eval do
+        result = weak_merge!({ foo: { bar: { baz: 15 } } },
+                             { foo: { bar: { extra: 10 }, nested: 'string' } })
+      end
+      expect(result).to eq({ foo: { bar: { baz: 15, extra: 10 }, nested: 'string' } })
+    end
   end
 
   describe '#chain' do

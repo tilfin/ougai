@@ -120,7 +120,7 @@ module Ougai
 
       if msg.nil?
         { msg: @default_message }
-      elsif ex.nil?
+      elsif ex.nil? && data.nil?
         create_item_with_1arg(msg)
       elsif data.nil?
         create_item_with_2args(msg, ex)

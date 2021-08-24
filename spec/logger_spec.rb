@@ -277,6 +277,24 @@ describe Ougai::Logger do
       end
     end
 
+    context 'with message, nil exception and data' do
+      it 'outputs valid' do
+        logger.send(method, log_msg, nil, something: { name: 'foo' })
+
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(something: { name: 'foo' })
+      end
+
+      it 'outputs valid by block' do
+        logger.send(method) do
+          [log_msg, nil, something: { name: 'foo' }]
+        end
+
+        expect(item).to be_log_message(log_msg, log_level)
+        expect(item).to include_data(something: { name: 'foo' })
+      end
+    end
+
     context 'without arguments' do
       it 'outputs only default message' do
         logger.send(method)

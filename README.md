@@ -40,7 +40,7 @@ All arguments of the `initialize` pass through itself to **::Logger**.
 require 'rubygems'
 require 'ougai'
 
-logger = Ougai::Logger.new(STDOUT)
+logger = Ougai::Logger.new($stdout)
 ```
 
 ### TRACE level

@@ -7,9 +7,9 @@ Ougai
 [![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
 [![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
-A structured logging system is capable of handling a message, structured data or an exception easily.
-It has JSON formatters compatible with [Bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) for Node.js and
-human readable formatter with [Amazing Print](https://github.com/amazing-print/amazing_print) for console.
+A structured logging system that is capable of handling a message, structured data, or an exception easily.
+It has JSON formatters compatible with [Bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) for Node.js, and a
+human-readable formatter with [Amazing Print](https://github.com/amazing-print/amazing_print) for the console.
 
 ## Installation
 
@@ -33,8 +33,8 @@ $ gem install ougai
 
 ## Usage
 
-**Ougai::Logger** is sub-class of original [Logger](https://ruby-doc.org/stdlib-2.4.1/libdoc/logger/rdoc/Logger.html) in Ruby.
-All arguments of the `initialize` pass through itself to **::Logger**.
+**Ougai::Logger** is a sub-class of the standard [Logger](https://ruby-doc.org/stdlib-2.4.1/libdoc/logger/rdoc/Logger.html) in Ruby.
+All arguments of the `initialize` pass through to **::Logger**.
 
 ```ruby
 require 'rubygems'
@@ -176,7 +176,7 @@ logger.fatal do
 end
 ```
 
-To specify more than one of a message, an exception and custom data, the block returns them as an array.
+To specify more than one message, exception, and custom data, the block returns them as an array.
 
 ### Adding custom fields to all logs
 

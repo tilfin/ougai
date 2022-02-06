@@ -18,7 +18,6 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = Dir['[A-Z]*[^~]'] + Dir['lib/**/*.rb'] + ['README.md', 'LICENSE.txt']
-  spec.test_files    = Dir['spec/**/*']
   spec.require_paths = ['lib']
 
   spec.required_ruby_version = '>= 2.5.0'

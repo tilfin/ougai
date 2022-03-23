@@ -37,7 +37,7 @@ $ gem install ougai
 All arguments of the `initialize` pass through to **::Logger**.
 
 ```ruby
-require 'rubygems'
+require 'rubygems' # only necessary for Ruby < 1.9
 require 'ougai'
 
 logger = Ougai::Logger.new($stdout)

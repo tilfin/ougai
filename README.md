@@ -37,7 +37,6 @@ $ gem install ougai
 All arguments of the `initialize` pass through to **::Logger**.
 
 ```ruby
-require 'rubygems'
 require 'ougai'
 
 logger = Ougai::Logger.new($stdout)
@@ -357,7 +356,6 @@ gem 'amazing_print'
 Set *Ougai::Formatters::Readable* instance to `formatter` accessor
 
 ```ruby
-require 'rubygems'
 require 'ougai'
 
 logger = Ougai::Logger.new(STDOUT)

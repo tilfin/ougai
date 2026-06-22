@@ -7,8 +7,8 @@ module Ougai
         require 'ougai/serializers/json_jr_jackson'
         Serializers::JsonJrJackson.new
       else
-        require 'ougai/serializers/json_oj'
-        Serializers::JsonOj.new
+        require 'ougai/serializers/json'
+        Serializers::Json.new
       end
     end
   end

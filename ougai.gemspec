@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
     spec.platform = 'java'
     spec.add_dependency 'jrjackson', '~> 0.4'
   else
-    spec.add_dependency "oj", "~> 3.17"
+    spec.add_dependency "json", "~> 2.20"
   end
 end

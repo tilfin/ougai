@@ -41,7 +41,7 @@ describe Ougai::Formatters::Readable do
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
       expect(subject).to include("\e[0;34mTRACE\e[0m: Log Message!")
-      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':status => 200')
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include('status: 200')
     end
   end
 
@@ -51,7 +51,7 @@ describe Ougai::Formatters::Readable do
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
       expect(subject).to include("\e[0;37mDEBUG\e[0m: Log Message!")
-      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':status => 200')
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include('status: 200')
     end
   end
 
@@ -61,7 +61,7 @@ describe Ougai::Formatters::Readable do
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
       expect(subject).to include("\e[0;36mINFO\e[0m: Log Message!")
-      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':method => "GET"')
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include('method: "GET"')
     end
   end
 
@@ -71,7 +71,7 @@ describe Ougai::Formatters::Readable do
     it 'includes valid strings' do
       expect(subject).to match(re_start_with_datetime)
       expect(subject).to include("\e[0;33mWARN\e[0m: Log Message!")
-      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include(':path => "/"')
+      expect(subject.gsub(/\e\[([;\d]+)?m/, '')).to include('path: "/"')
     end
   end
 
@@ -112,9 +112,9 @@ describe Ougai::Formatters::Readable do
     it 'includes valid strings' do
       expect(subject).to include("\e[0;37mDEBUG\e[0m: Log Message!")
       plain_subject = subject.gsub(/\e\[([;\d]+)?m/, '')
-      expect(plain_subject).to include(':path => "/"')
-      expect(plain_subject).not_to include(':status => 200')
-      expect(plain_subject).not_to include(':method => "GET"')
+      expect(plain_subject).to include('path: "/"')
+      expect(plain_subject).not_to include('status: 200')
+      expect(plain_subject).not_to include('method: "GET"')
     end
   end
 

@@ -17,9 +17,3 @@ jobs:
           bundler-cache: true # 'bundle install' and cache
       - name: Run tests
         run: bundle exec rspec
-      - name: Code Climate Test Reporter
-        if: matrix.ruby-version == '3.4'
-        uses: aktions/codeclimate-test-reporter@v1
-        with:
-          codeclimate-test-reporter-id: ${{ secrets.CC_TEST_REPORTER_ID }}
-          command: after-build

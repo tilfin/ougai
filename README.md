@@ -4,8 +4,6 @@ Ougai
 [![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
 [![document](https://img.shields.io/badge/document-2.0.0-green.svg)](http://www.rubydoc.info/gems/ougai/)
 [![CI](https://github.com/tilfin/ougai/actions/workflows/ci.yml/badge.svg)](https://github.com/tilfin/ougai/actions/workflows/ci.yml)
-[![Code Climate](https://codeclimate.com/github/tilfin/ougai/badges/gpa.svg)](https://codeclimate.com/github/tilfin/ougai)
-[![Test Coverage](https://codeclimate.com/github/tilfin/ougai/badges/coverage.svg)](https://codeclimate.com/github/tilfin/ougai/coverage)
 
 A structured logging system that is capable of handling a message, structured data, or an exception easily.
 It has JSON formatters compatible with [Bunyan](https://github.com/trentm/node-bunyan) or [pino](https://github.com/pinojs/pino) for Node.js, and a

@@ -2,7 +2,7 @@ Ougai
 =====
 
 [![Gem Version](https://badge.fury.io/rb/ougai.svg)](https://badge.fury.io/rb/ougai)
-[![document](https://img.shields.io/badge/document-2.0.0-green.svg)](http://www.rubydoc.info/gems/ougai/)
+[![document](https://img.shields.io/badge/document-2.1.0-green.svg)](http://www.rubydoc.info/gems/ougai/)
 [![CI](https://github.com/tilfin/ougai/actions/workflows/ci.yml/badge.svg)](https://github.com/tilfin/ougai/actions/workflows/ci.yml)
 
 A structured logging system that is capable of handling a message, structured data, or an exception easily.
@@ -362,7 +362,7 @@ logger.formatter = Ougai::Formatters::Readable.new
 
 ### Screen result example
 
-![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format.png?raw=true)
+![Screen Shot](https://github.com/tilfin/ougai/blob/images/ougai_readable_format_2-1.png?raw=true)
 
 
 ## How to use with famous products, services and libraries

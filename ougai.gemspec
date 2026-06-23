@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.1.0'
 
-  spec.add_dependency "logger"
+  spec.add_dependency "logger", "~> 1.5"
 
   if RUBY_PLATFORM =~ /java/
     spec.platform = 'java'
@@ -30,8 +30,4 @@ Gem::Specification.new do |spec|
   else
     spec.add_dependency "oj", "~> 3.17"
   end
-
-  spec.add_development_dependency "bundler", ">= 2.3"
-  spec.add_development_dependency "rake", ">= 13.2"
-  spec.add_development_dependency "rspec", ">= 3.13"
 end

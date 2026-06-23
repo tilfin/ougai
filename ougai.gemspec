@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['[A-Z]*[^~]'] + Dir['lib/**/*.rb'] + ['README.md', 'LICENSE.txt']
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.5.0'
+  spec.required_ruby_version = '>= 3.1.0'
 
   spec.add_dependency "logger"
 
@@ -28,10 +28,10 @@ Gem::Specification.new do |spec|
     spec.platform = 'java'
     spec.add_dependency 'jrjackson', '~> 0.4'
   else
-    spec.add_dependency "oj", "~> 3.10"
+    spec.add_dependency "oj", "~> 3.17"
   end
 
-  spec.add_development_dependency "bundler", ">= 2.1.4"
-  spec.add_development_dependency "rake", ">= 13.0.1"
-  spec.add_development_dependency "rspec", ">= 3.9.0"
+  spec.add_development_dependency "bundler", ">= 2.3"
+  spec.add_development_dependency "rake", ">= 13.2"
+  spec.add_development_dependency "rspec", ">= 3.13"
 end
